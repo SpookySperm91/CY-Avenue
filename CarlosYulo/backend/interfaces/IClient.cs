@@ -12,8 +12,8 @@ public interface IClientCreate
 
 public interface IClientSearch
 {
-    ClientMembership? SearchClientByMembershipId(int membershipId, string gender);
-    ClientMembership? SearchClientByFullName(string fullName, string gender);
+    ClientMembership? SearchClientByMembershipId(int membershipId, string? gender);
+    ClientMembership? SearchClientByFullName(string fullName, string? gender);
 }
 
 public interface IClientUpdate

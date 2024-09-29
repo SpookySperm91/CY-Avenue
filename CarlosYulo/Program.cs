@@ -11,10 +11,17 @@ static class Program
     static void Main()
     {
         // Initialize and check the database connection before launching the form
-        var dbConnector = new DatabaseConnector();
-        if (dbConnector.FncConnectionToDatabase())
+        var dbConnector = new DatabaseConnector(
+            "localhost",
+            "cy",
+            "root",
+            "123456",
+            "3306");
+        
+        // Test the database connection
+        if (dbConnector.TestConnection())
         {
-            Console.WriteLine("Connected to the database successfully.");
+            Console.WriteLine("Connection successful!");
         }
         else
         {
@@ -23,6 +30,6 @@ static class Program
 
         // Initialize application configurations and run the form
         ApplicationConfiguration.Initialize();
-        Application.Run(new Form1());
+        Application.Run(new Form1(dbConnector));
     }
 }

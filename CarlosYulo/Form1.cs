@@ -6,14 +6,11 @@ namespace CarlosYulo;
 
 public partial class Form1 : Form
 {
-    private DatabaseConnector db;
     IClientService clientService;
 
-    public Form1()
+    public Form1(DatabaseConnector db)
     {
         InitializeComponent();
-        db = new DatabaseConnector();
-
         clientService = new ClientService(
             new ClientCreate(db),
             new ClientUpdate(db),
@@ -23,42 +20,60 @@ public partial class Form1 : Form
 
     private void btnSearchFullName_Click(object sender, EventArgs e)
     {
-        string fullName = txtbxFullName.Text;
-        clientService.SearchClientByFullName(fullName, null);
+        ClientMembership? client = clientService.SearchClientByFullName(txtbxFullName.Text, null);
+
+        try
+        {
+            if (client != null)
+            {
+                lblName.Text = client.FullName;
+                lblMemberShipId.Text = client.MembershipId.ToString();
+                lblEmail.Text = client.Email;
+                lblPhoneNumber.Text = client.PhoneNumber;
+                lblGender.Text = client.Gender;
+                lblAge.Text = client.Age.ToString();
+                return;
+            }
+
+            MessageBox.Show($"Client does not exist!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        catch (Exception exception)
+        {
+            MessageBox.Show(exception.Message);
+            Console.WriteLine(exception);
+            throw;
+        }
     }
 
     private void btnSearchMemberShipId_Click(object sender, EventArgs e)
     {
         int membershipId;
-        if (int.TryParse(txtbxMemberShipId.Text, out membershipId)) 
+        if (int.TryParse(txtbxMemberShipId.Text, out membershipId))
         {
             ClientMembership? client = clientService.SearchClientByMembershipId(membershipId, null);
-
-            if (client != null)
+            
+            try
             {
-                // Assign the FullName to the Label's Text property
-                lblName.Text = client.FullName;
-                lblEmail.Text = client.Email;
-                lblPhoneNumber.Text = client.PhoneNumber;
-                lblGender.Text = client.Gender;
-                lblAge.Text = client.Age.ToString();
-                lblMemberShipStart.Text = client.MembershipStart.ToString("MM/dd/yyyy"); 
-                lblMembershipEnd.Text = client.MembershipEnd.ToString("MM/dd/yyyy");
-                lblMembershipStatus.Text = client.MembershipStatus.ToString();
+                if (client != null)
+                {
+                    lblName.Text = client.FullName;
+                    lblEmail.Text = client.Email;
+                    lblPhoneNumber.Text = client.PhoneNumber;
+                    lblGender.Text = client.Gender;
+                    lblAge.Text = client.Age.ToString();
+                    return;
+                }
 
-
+                MessageBox.Show($"Client does not exist!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
-            else
+            catch (Exception exception)
             {
-                lblName.Text = "Client not found";
+                MessageBox.Show(exception.Message);
+                Console.WriteLine(exception);
+                throw;
             }
         }
-        else
-        {
-            lblName.Text = "Invalid membership ID";
-        }
-
-
-
+        MessageBox.Show($"Invalid input format!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 }

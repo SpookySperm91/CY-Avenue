@@ -6,77 +6,70 @@ namespace CarlosYulo.backend.monolith;
 
 public class ClientSearch : IClientSearch
 {
-    private DatabaseConnector dbConnector;
+    private readonly DatabaseConnector dbConnector;
 
     public ClientSearch(DatabaseConnector dbConnector)
     {
         this.dbConnector = dbConnector;
     }
 
-    public ClientMembership? SearchClientByMembershipId(int membershipId, string gender)
+    public ClientMembership? SearchClientByMembershipId(int membershipId, string? gender)
     {
         return SearchClient("prcClientSearchByMembershipId", membershipId, null, gender);
     }
 
-    public ClientMembership? SearchClientByFullName(string fullName, string gender)
+    public ClientMembership? SearchClientByFullName(string fullName, string? gender)
     {
         return SearchClient("prcClientSearchByName", null, fullName, gender);
     }
 
-    
-    private ClientMembership? SearchClient(string storedProcedure, int? membershipId, string fullName, string gender)
+    private ClientMembership? SearchClient(string storedProcedure, int? membershipId, string? fullName, string? gender)
     {
-        ClientMembership client = null;
+        ClientMembership? client = null;
 
-        using (var command = new MySqlCommand(storedProcedure, dbConnector.mysqlConnection))
+        using (var connection = dbConnector.CreateConnection())
         {
-            command.CommandType = CommandType.StoredProcedure;
+            // Open the connection
+            connection.Open();
 
-            if (membershipId.HasValue)
+            using (var command = new MySqlCommand(storedProcedure, connection))
             {
-                command.Parameters.AddWithValue("p_membership_id", membershipId.Value);
-            }
+                command.CommandType = CommandType.StoredProcedure;
 
-            if (!string.IsNullOrEmpty(fullName))
-            {
-                command.Parameters.AddWithValue("p_client_full_name", fullName);
-            }
-
-            command.Parameters.AddWithValue("p_gender", string.IsNullOrEmpty(gender) ? (object)DBNull.Value : gender);
-
-            try
-            {
-                dbConnector.mysqlConnection.Open();
-                using (var reader = command.ExecuteReader())
+                // Add parameters based on search type
+                if (membershipId.HasValue)
                 {
-                    if (reader.Read())
+                    command.Parameters.AddWithValue("p_membership_id", membershipId.Value);
+                }
+                else if (!string.IsNullOrEmpty(fullName))
+                {
+                    command.Parameters.AddWithValue("p_client_full_name", fullName);
+                }
+
+                // Gender parameter (common to both procedures)
+                command.Parameters.AddWithValue("p_gender",
+                    string.IsNullOrEmpty(gender) ? (object)DBNull.Value : gender);
+
+                try
+                {
+                    using (var reader = command.ExecuteReader())
                     {
-                        client = new ClientMembership()
+                        if (reader.Read())
                         {
-                            MembershipId = reader.GetInt32("membership_id"),
-                            ProfilePicture = reader.GetString("profile_pic"),
-                            FullName = reader.GetString("full_name"),
-                            MembershipType = reader.GetInt32("membership_type"),
-                            Email = reader.GetString("email"),
-                            PhoneNumber = reader.GetString("phone_number"),
-                            Gender = reader.GetString("gender"),
-                            Age = reader.GetInt32("age"),
-                            BirthDate = reader.GetDateTime("birthday"),
-                            MembershipStart = reader.GetDateTime("membership_start"),
-                            MembershipEnd = reader.GetDateTime("membership_end"),
-                            MembershipStatus = reader.GetString("membership_status")
-                        };
+                            client = new ClientMembership();
+                            client.FullName = reader["full_name"].ToString();
+                            client.MembershipId = Convert.ToInt32(reader["membership_id"]);
+                            client.Email = reader["email"].ToString();
+                            client.PhoneNumber = reader["phone_number"].ToString();
+                            client.Age = Convert.ToInt32(reader["age"]);
+                            client.Gender = reader["gender"].ToString();
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                // Handle exception (e.g., logging)
-                Console.WriteLine($"Error fetching client: {ex.Message}");
-            }
-            finally
-            {
-                dbConnector.mysqlConnection.Close();
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error fetching client: {ex.Message}");
+                }
             }
         }
 

@@ -15,6 +15,6 @@ public interface IClientService
     bool DeleteClientByMembershipId(int membershipId);
     
     // SEARCH FUNCTIONS
-    ClientMembership? SearchClientByMembershipId(int membershipId, string gender);
-    ClientMembership? SearchClientByFullName(string fullName, string gender);
+    ClientMembership? SearchClientByMembershipId(int membershipId, string? gender);
+    ClientMembership? SearchClientByFullName(string fullName, string? gender);
 }
