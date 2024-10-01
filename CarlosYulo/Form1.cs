@@ -8,19 +8,15 @@ public partial class Form1 : Form
 {
     IClientService clientService;
 
-    public Form1(DatabaseConnector db)
+    public Form1(IClientService clientService)
     {
         InitializeComponent();
-        clientService = new ClientService(
-            new ClientCreate(db),
-            new ClientUpdate(db),
-            new ClientDelete(db),
-            new ClientSearch(db));
+        this.clientService = clientService;
     }
 
     private void btnSearchFullName_Click(object sender, EventArgs e)
     {
-        ClientMembership? client = clientService.SearchClientByFullName(txtbxFullName.Text, null);
+        Client? client = clientService.SearchClientByFullName(txtbxFullName.Text, null);
 
         try
         {
@@ -32,6 +28,8 @@ public partial class Form1 : Form
                 lblPhoneNumber.Text = client.PhoneNumber;
                 lblGender.Text = client.Gender;
                 lblAge.Text = client.Age.ToString();
+                lblMemberShipStart.Text = client.MembershipStart.ToString("MM/dd/yyyy");
+                lblMembershipEnd.Text = client.MembershipEnd.ToString("MM/dd/yyyy");
                 return;
             }
 
@@ -47,33 +45,45 @@ public partial class Form1 : Form
 
     private void btnSearchMemberShipId_Click(object sender, EventArgs e)
     {
-        int membershipId;
-        if (int.TryParse(txtbxMemberShipId.Text, out membershipId))
+        bool y = clientService.DeleteClientByMembershipId(Convert.ToInt32(txtbxMemberShipId.Text));
+        if (y)
         {
-            ClientMembership? client = clientService.SearchClientByMembershipId(membershipId, null);
-            
-            try
-            {
-                if (client != null)
-                {
-                    lblName.Text = client.FullName;
-                    lblEmail.Text = client.Email;
-                    lblPhoneNumber.Text = client.PhoneNumber;
-                    lblGender.Text = client.Gender;
-                    lblAge.Text = client.Age.ToString();
-                    return;
-                }
-
-                MessageBox.Show($"Client does not exist!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show(exception.Message);
-                Console.WriteLine(exception);
-                throw;
-            }
+            MessageBox.Show("Member" + txtbxMemberShipId.Text + " delete");
         }
-        MessageBox.Show($"Invalid input format!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        else
+        {
+            MessageBox.Show("Error deleting membership");
+        }
+
+
+        //     int membershipId;
+        //     if (int.TryParse(txtbxMemberShipId.Text, out membershipId))
+        //     {
+        //         ClientMembership? client = clientService.SearchClientByMembershipId(membershipId, null);
+        //         
+        //         try
+        //         {
+        //             if (client != null)
+        //             {
+        //                 lblName.Text = client.FullName;
+        //                 lblEmail.Text = client.Email;
+        //                 lblPhoneNumber.Text = client.PhoneNumber;
+        //                 lblGender.Text = client.Gender;
+        //                 lblAge.Text = client.Age.ToString();
+        //                 return;
+        //             }
+        //
+        //             MessageBox.Show($"Client does not exist!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //             return;
+        //         }
+        //         catch (Exception exception)
+        //         {
+        //             MessageBox.Show(exception.Message);
+        //             Console.WriteLine(exception);
+        //             throw;
+        //         }
+        //     }
+        //     MessageBox.Show($"Invalid input format!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        // }
     }
 }

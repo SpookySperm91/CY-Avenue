@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 
 namespace CarlosYulo.backend.monolith;
 
-public class ClientSearch : IClientSearch
+public class ClientSearch : ISearch<Client>
 {
     private readonly DatabaseConnector dbConnector;
 
@@ -13,19 +13,26 @@ public class ClientSearch : IClientSearch
         this.dbConnector = dbConnector;
     }
 
-    public ClientMembership? SearchClientByMembershipId(int membershipId, string? gender)
+    public Client? SearchById(int membershipId, string? gender)
     {
         return SearchClient("prcClientSearchByMembershipId", membershipId, null, gender);
     }
 
-    public ClientMembership? SearchClientByFullName(string fullName, string? gender)
+    public Client? SearchByFullName(string fullName, string? gender)
     {
         return SearchClient("prcClientSearchByName", null, fullName, gender);
     }
 
-    private ClientMembership? SearchClient(string storedProcedure, int? membershipId, string? fullName, string? gender)
+
+    public List<Client> SearchAll()
     {
-        ClientMembership? client = null;
+        return null;
+    }
+    
+
+    private Client? SearchClient(string storedProcedure, int? membershipId, string? fullName, string? gender)
+    {
+        Client? client = null;
 
         using (var connection = dbConnector.CreateConnection())
         {
@@ -56,13 +63,16 @@ public class ClientSearch : IClientSearch
                     {
                         if (reader.Read())
                         {
-                            client = new ClientMembership();
+                            client = new Client();
                             client.FullName = reader["full_name"].ToString();
                             client.MembershipId = Convert.ToInt32(reader["membership_id"]);
                             client.Email = reader["email"].ToString();
                             client.PhoneNumber = reader["phone_number"].ToString();
                             client.Age = Convert.ToInt32(reader["age"]);
                             client.Gender = reader["gender"].ToString();
+                            client.MembershipStart = Convert.ToDateTime(reader["membership_start"]);
+                            client.MembershipEnd = Convert.ToDateTime(reader["membership_end"]);
+                            client.MembershipStatus = reader["membership_status"].ToString();
                         }
                     }
                 }

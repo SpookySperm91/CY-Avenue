@@ -1,6 +1,8 @@
-﻿namespace CarlosYulo.backend;
+﻿using System.ComponentModel;
 
-public class ClientMembership
+namespace CarlosYulo.backend;
+
+public class Client
 {
     public  int MembershipId { get;  set; }
     public  string ProfilePicture { get;  set; }
@@ -15,10 +17,10 @@ public class ClientMembership
     public  DateTime MembershipEnd { get;  set; }
     public string MembershipStatus { get;  set; }
 
-    public ClientMembership()
+    public Client()
     { }
     
-    public ClientMembership(int membershipId, string profilePicture, string fullName, int membershipType,
+    public Client(int membershipId, string profilePicture, string fullName, int membershipType,
         string email, string phoneNumber, string gender, int age, DateTime birthDate,
         DateTime membershipStart, DateTime membershipEnd, string membershipStatus)
     {
@@ -49,6 +51,20 @@ public enum MembershipType
 
 public enum MembershipStatus
 {
+    [Description("Inactive")]
     INACTIVE,
+    
+    [Description("Active")]
     ACTIVE
+}
+
+
+public static class EnumExtensions
+{
+    public static string GetDescription(this Enum value)
+    {
+        var field = value.GetType().GetField(value.ToString());
+        var attribute = (DescriptionAttribute)Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute));
+        return attribute == null ? value.ToString() : attribute.Description;
+    }
 }

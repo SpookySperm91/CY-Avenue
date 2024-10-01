@@ -2,7 +2,7 @@
 
 namespace CarlosYulo.backend.monolith;
 
-public class ClientUpdate: IClientUpdate
+public class ClientUpdate : IUpdate<Client>, IClientUpdate
 {
     private DatabaseConnector dbConnector;
 
@@ -10,18 +10,18 @@ public class ClientUpdate: IClientUpdate
     {
         this.dbConnector = dbConnector;
     }
-    
-    public bool UpdateClient(ClientMembership client)
+
+    public bool Update(Client client)
     {
         return true;
     }
 
-    public bool UpdateClientProfilePicture(ClientMembership client, string image)
+    public bool UpdateProfilePicture(Client client, string image)
     {
         return true;
     }
 
-    public bool UpdateClientMembershipType(ClientMembership client, MembershipType membership)
+    public bool UpdateClientMembershipType(Client client, MembershipType membership)
     {
         return true;
     }

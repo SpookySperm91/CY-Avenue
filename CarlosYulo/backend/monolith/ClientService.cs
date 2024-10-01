@@ -4,74 +4,83 @@ namespace CarlosYulo.backend.monolith;
 
 public class ClientService : IClientService
 {
-    private IClientCreate clientCreate { get; set; }
-    private IClientUpdate clientUpdate { get; set; }
-    private IClientDelete clientDelete { get; set; }
-    private IClientSearch clientSearch { get; set; }
+    private ICreate<Client> clientCreate { get; set; }
+    private IUpdate<Client> clientUpdate { get; set; }
+    private IDelete<Client> clientDelete { get; set; }
+    private ISearch<Client> clientSearch { get; set; }
+    private IClientUpdate iClientUpdate { get; set; }
 
-    public ClientService(IClientCreate clientCreate,
-        IClientUpdate clientUpdate,
-        IClientDelete clientDelete,
-        IClientSearch clientSearch)
+    public ClientService(
+        ICreate<Client> clientCreate,
+        IUpdate<Client> clientUpdate,
+        IDelete<Client> clientDelete,
+        ISearch<Client> clientSearch,
+        IClientUpdate iClientUpdate)
     {
         this.clientCreate = clientCreate;
         this.clientUpdate = clientUpdate;
         this.clientDelete = clientDelete;
         this.clientSearch = clientSearch;
+        this.iClientUpdate = iClientUpdate;
     }
 
     // CREATE FUNCTION
-    public bool CreateClient(ClientMembership clientMembership)
+    public bool CreateClient(Client client)
     {
-        return clientCreate.CreateClient(clientMembership);
+        return clientCreate.Create(client);
     }
 
 
     // UPDATE FUNCTIONS
-    public bool UpdateClient(ClientMembership clientMembership)
+    public bool UpdateClient(Client client)
     {
-        return clientUpdate.UpdateClient(clientMembership);
+        return clientUpdate.Update(client);
     }
 
-    public bool UpdateClientProfilePicture(ClientMembership clientMembership, string picture)
+    public bool UpdateClientProfilePicture(Client client, string picture)
     {
-        return clientUpdate.UpdateClientProfilePicture(clientMembership, picture);
+        return clientUpdate.UpdateProfilePicture(client, picture);
     }
 
-    public bool UpdateClientMembershipType(ClientMembership clientMembership, MembershipType membershipType)
+    public bool UpdateClientMembershipType(Client client, MembershipType membershipType)
     {
-        return clientUpdate.UpdateClientMembershipType(clientMembership, membershipType);
+        return iClientUpdate.UpdateClientMembershipType(client, membershipType);
     }
 
 
     // DELETE FUNCTIONS
-    public bool DeleteClient(ClientMembership client)
+    public bool DeleteClient(Client client)
     {
-        return clientDelete.DeleteClient(client);
+        return clientDelete.Delete(client);
     }
 
     public bool DeleteClientByMembershipId(int membershipId)
     {
-        return clientDelete.DeleteClientByMembershipId(membershipId);
+        if (membershipId < 100000 || membershipId > 999999)
+        {
+            return false; 
+        }
+        
+        return clientDelete.DeleteById(membershipId);
     }
 
 
     // SEARCH FUNCTIONS
-    public ClientMembership? SearchClientByMembershipId(int membershipId, string? gender)
+    public Client? SearchClientByMembershipId(int membershipId, string? gender)
     {
         if (membershipId < 100000 || membershipId > 999999)
         {
             return null; 
         }
-        return clientSearch.SearchClientByMembershipId(membershipId, gender);
+        return clientSearch.SearchById(membershipId, gender);
     }
 
-    public ClientMembership? SearchClientByFullName(string fullName, string? gender)
+    public Client? SearchClientByFullName(string fullName, string? gender)
     {
         if (String.IsNullOrEmpty(fullName))
         {
             return null;
         }
-        return clientSearch.SearchClientByFullName(fullName, gender);
+        return clientSearch.SearchByFullName(fullName, gender);
     }
 }
