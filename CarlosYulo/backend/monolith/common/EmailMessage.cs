@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Mail;
+using System.Reflection;
 using Google.Protobuf;
 
 namespace CarlosYulo.backend.monolith.common;
@@ -19,6 +20,18 @@ public class EmailMessage : ISMTPServer
         this.SmtpPort = 587;
     }
 
+    public string LoadEmailTemplate(string templateName)
+    {
+        string templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"template\", templateName);
+
+        if (File.Exists(templatePath))
+        {
+            return File.ReadAllText(templatePath);
+        }
+        throw new FileNotFoundException("Email template not found: " + templatePath);
+    }
+
+
     public void SentHtmlEmail(string username, string email, string body)
     {
         // Validate inputs
@@ -27,13 +40,16 @@ public class EmailMessage : ISMTPServer
             throw new ArgumentException("Username, email, and body must not be null or empty.");
         }
 
-        string htmlPath = @"C:\Users\Jhon Andrie\RiderProjects\CarlosYulo\CarlosYulo\backend\monolith\common\html\EmailVerificationCode.html";
-        
-        string htmlTemplate = File.ReadAllText(htmlPath);
-        string emailBody = htmlTemplate
-            .Replace("<span id=\"username-placeholder\"></span>", $"<span>{username}</span>")
-            .Replace("<div class=\"verification-code\" id=\"code-placeholder\">123456</div>", $"<div class=\"verification-code\">{body}</div>");
+        // Load email
+        string emailTemplate = LoadEmailTemplate("EmailVerificationTemplate.html");
 
+        // Replace placeholders with actual values
+        string emailBody = emailTemplate
+            .Replace("<span id=\"username-placeholder\"></span>", $"<span>{username}</span>")
+            .Replace("<div class=\"verification-code\" id=\"code-placeholder\">123456</div>",
+                $"<div class=\"verification-code\">{body}</div>");
+
+        // Email sending logic
         using (SmtpClient smtpClient = SetupSmtpServer())
         using (MailMessage mail = new MailMessage())
         {
