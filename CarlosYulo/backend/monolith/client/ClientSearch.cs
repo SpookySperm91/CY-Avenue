@@ -61,7 +61,7 @@ public class ClientSearch : ISearch<Client, string>, IClientSearch
                             MembershipStatus = reader["membership_status"].ToString(),
                             Age = Convert.ToInt32(reader["age"]),
                             Gender = reader["gender"].ToString(),
-                            ProfilePicture = reader["profile_picture"].ToString()
+                            ProfilePicture = reader["profile_pic"].ToString()
                         };
 
                         clients.Add(client);

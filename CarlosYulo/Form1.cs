@@ -21,7 +21,7 @@ public partial class Form1 : Form
     private void btnSearchFullName_Click(object sender, EventArgs e)
     {
         Client? client = clientService.SearchClientByFullName(txtbxFullName.Text, null);
-
+        Console.WriteLine(txtbxFullName.Text);
         try
         {
             if (client != null)
@@ -59,6 +59,11 @@ public partial class Form1 : Form
         {
             MessageBox.Show($"An error occurred: {ex.Message}");
         }
+    }
+    
+    private void txtbxFullName_TextChanged(object sender, EventArgs e)
+    {
+
     }
 
 }
