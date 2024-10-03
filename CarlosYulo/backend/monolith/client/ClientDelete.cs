@@ -18,7 +18,7 @@ public class ClientDelete : IDelete<Client>
         return DeleteClientFunction("prcClientDeleteByMembershipId", null, client);
     }
 
-    public bool DeleteById(int membershipId)
+    public bool DeleteById(int? membershipId)
     {
         return DeleteClientFunction("prcClientDeleteByMembershipId", membershipId, null);
     }

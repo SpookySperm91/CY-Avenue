@@ -1,17 +1,21 @@
 using CarlosYulo.backend;
 using CarlosYulo.backend.monolith;
+using CarlosYulo.backend.monolith.common;
 using CarlosYulo.database;
 
 namespace CarlosYulo;
 
 public partial class Form1 : Form
 {
-    IClientService clientService;
-
-    public Form1(IClientService clientService)
+    ClientService clientService;
+    EmailMessage email;
+    
+    
+    public Form1(ClientService clientService, EmailMessage email)
     {
         InitializeComponent();
         this.clientService = clientService;
+        this.email = email;
     }
 
     private void btnSearchFullName_Click(object sender, EventArgs e)
@@ -45,45 +49,21 @@ public partial class Form1 : Form
 
     private void btnSearchMemberShipId_Click(object sender, EventArgs e)
     {
-        bool y = clientService.DeleteClientByMembershipId(Convert.ToInt32(txtbxMemberShipId.Text));
-        if (y)
+        try
         {
-            MessageBox.Show("Member" + txtbxMemberShipId.Text + " delete");
+            email.SentHtmlEmail("Arima Kana", "jhonandriecanedo1@gmail.com", "This is a Test!");
+            // MessageBox.Show($"An error occurred: {ex.Message}");
+
         }
-        else
+        catch (Exception ex)
         {
-            MessageBox.Show("Error deleting membership");
+            MessageBox.Show($"An error occurred: {ex.Message}");
         }
-
-
-        //     int membershipId;
-        //     if (int.TryParse(txtbxMemberShipId.Text, out membershipId))
-        //     {
-        //         ClientMembership? client = clientService.SearchClientByMembershipId(membershipId, null);
-        //         
-        //         try
-        //         {
-        //             if (client != null)
-        //             {
-        //                 lblName.Text = client.FullName;
-        //                 lblEmail.Text = client.Email;
-        //                 lblPhoneNumber.Text = client.PhoneNumber;
-        //                 lblGender.Text = client.Gender;
-        //                 lblAge.Text = client.Age.ToString();
-        //                 return;
-        //             }
-        //
-        //             MessageBox.Show($"Client does not exist!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //             return;
-        //         }
-        //         catch (Exception exception)
-        //         {
-        //             MessageBox.Show(exception.Message);
-        //             Console.WriteLine(exception);
-        //             throw;
-        //         }
-        //     }
-        //     MessageBox.Show($"Invalid input format!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        // }
     }
+
 }
+
+
+
+
+      

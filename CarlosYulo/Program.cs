@@ -1,5 +1,7 @@
 using CarlosYulo.backend;
 using CarlosYulo.backend.monolith;
+using CarlosYulo.backend.monolith.common;
+using CarlosYulo.backend.monolith.employee;
 using CarlosYulo.database;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -61,11 +63,26 @@ namespace CarlosYulo
             services.AddScoped<ICreate<Client>, ClientCreate>();
             services.AddScoped<IUpdate<Client>, ClientUpdate>();
             services.AddScoped<IDelete<Client>, ClientDelete>();
-            services.AddScoped<ISearch<Client>, ClientSearch>();
+            services.AddScoped<ISearch<Client, string>, ClientSearch>();
             services.AddScoped<IClientUpdate, ClientUpdate>();
-
+            services.AddScoped<IClientCreate, ClientCreate>();
+            
+            // services.AddScoped<ICreate<Employee>, ClientCreate>();
+            // services.AddScoped<IUpdate<Employee>, ClientUpdate>();
+            // services.AddScoped<IDelete<Employee>, EmployeeDelete>();
+            services.AddScoped<ISearch<Employee, int?>, EmployeeSearch>();
+            
             // ClientService class
-            services.AddScoped<IClientService, ClientService>();
+            //services.AddScoped<IClientService, ClientService>();
+            services.AddScoped<ClientService>();
+            
+            // EmployeeService class
+            services.AddScoped<EmployeeService>();
+
+            // Email class
+            services.AddScoped<EmailMessage>();
+
+            
             services.AddScoped<Form1>();
         }
     }

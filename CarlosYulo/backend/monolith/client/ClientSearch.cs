@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 
 namespace CarlosYulo.backend.monolith;
 
-public class ClientSearch : ISearch<Client>
+public class ClientSearch : ISearch<Client, string>, IClientSearch
 {
     private readonly DatabaseConnector dbConnector;
 
@@ -15,22 +15,66 @@ public class ClientSearch : ISearch<Client>
 
     public Client? SearchById(int membershipId, string? gender)
     {
-        return SearchClient("prcClientSearchByMembershipId", membershipId, null, gender);
+        return SearchClient("prcClientSearchByMembershipId", membershipId, null, gender, "Member");
     }
 
     public Client? SearchByFullName(string fullName, string? gender)
     {
-        return SearchClient("prcClientSearchByName", null, fullName, gender);
+        return SearchClient("prcClientSearchByName", null, fullName, gender, "Member");
+    }
+
+    public Client? SearchWalkInByMembershipId(int membershipId)
+    {
+        return SearchClient("prcClientSearchByMembershipId", membershipId, null, null, "Walk-in");
+    }
+
+    public Client? SearchWalkInByFullName(string fullName)
+    {
+        return SearchClient("prcClientSearchByName", null, fullName, null, "Walk-in");
     }
 
 
     public List<Client> SearchAll()
     {
-        return null;
-    }
-    
+        var clients = new List<Client>();
 
-    private Client? SearchClient(string storedProcedure, int? membershipId, string? fullName, string? gender)
+        using (var connection = dbConnector.CreateConnection())
+        {
+            connection.Open();
+
+            using (var command = new MySqlCommand("prcGetAllClients", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var client = new Client
+                        {
+                            FullName = reader["full_name"].ToString(),
+                            MembershipId = Convert.ToInt32(reader["membership_id"]),
+                            Email = reader["email"].ToString(),
+                            PhoneNumber = reader["phone_number"].ToString(),
+                            MembershipStart = Convert.ToDateTime(reader["membership_start"]),
+                            MembershipEnd = Convert.ToDateTime(reader["membership_end"]),
+                            MembershipStatus = reader["membership_status"].ToString(),
+                            Age = Convert.ToInt32(reader["age"]),
+                            Gender = reader["gender"].ToString(),
+                            ProfilePicture = reader["profile_picture"].ToString()
+                        };
+
+                        clients.Add(client);
+                    }
+                }
+            }
+        }
+
+        return clients;
+    }
+
+
+    private Client? SearchClient(string storedProcedure, int? membershipId, string? fullName, string? gender, string type)
     {
         Client? client = null;
 
@@ -68,11 +112,17 @@ public class ClientSearch : ISearch<Client>
                             client.MembershipId = Convert.ToInt32(reader["membership_id"]);
                             client.Email = reader["email"].ToString();
                             client.PhoneNumber = reader["phone_number"].ToString();
-                            client.Age = Convert.ToInt32(reader["age"]);
-                            client.Gender = reader["gender"].ToString();
+
                             client.MembershipStart = Convert.ToDateTime(reader["membership_start"]);
                             client.MembershipEnd = Convert.ToDateTime(reader["membership_end"]);
                             client.MembershipStatus = reader["membership_status"].ToString();
+
+                            if (type.Equals("Member"))
+                            {
+                                client.Age = Convert.ToInt32(reader["age"]);
+                                client.Gender = reader["gender"].ToString();
+                                client.ProfilePicture = reader["profile_picture"].ToString();
+                            }
                         }
                     }
                 }

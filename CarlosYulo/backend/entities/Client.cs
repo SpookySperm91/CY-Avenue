@@ -17,8 +17,7 @@ public class Client
     public  DateTime MembershipEnd { get;  set; }
     public string MembershipStatus { get;  set; }
 
-    public Client()
-    { }
+    public Client() { }
     
     public Client(int membershipId, string profilePicture, string fullName, int membershipType,
         string email, string phoneNumber, string gender, int age, DateTime birthDate,
@@ -39,32 +38,18 @@ public class Client
     }
 }
 
-
-
 public enum MembershipType
 {
-    ACCESSIBILITY,
-    PREMIUM,
-    WALK_IN,
-    WALK_IN_TREADMILL
+    [Description("Accessibility")] ACCESSIBILITY,
+    [Description("Premium")] PREMIUM,
+    [Description("Walk-in")] WALK_IN,
+    [Description("Walk-in(Treadmill)")] WALK_IN_TREADMILL
 }
 
 public enum MembershipStatus
 {
-    [Description("Inactive")]
-    INACTIVE,
-    
-    [Description("Active")]
-    ACTIVE
+    [Description("Inactive")] INACTIVE,
+    [Description("Active")] ACTIVE
 }
 
 
-public static class EnumExtensions
-{
-    public static string GetDescription(this Enum value)
-    {
-        var field = value.GetType().GetField(value.ToString());
-        var attribute = (DescriptionAttribute)Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute));
-        return attribute == null ? value.ToString() : attribute.Description;
-    }
-}

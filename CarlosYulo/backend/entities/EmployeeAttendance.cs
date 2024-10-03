@@ -11,9 +11,7 @@ public class EmployeeAttendance
     private DateTime checkInTime { get; set; }
     private DateTime checkOutTime { get; set; }
 
-    public EmployeeAttendance()
-    {
-    }
+    public EmployeeAttendance() { }
 }
 
 public enum AttendanceStatus
