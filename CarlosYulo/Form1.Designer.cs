@@ -30,6 +30,7 @@ partial class Form1
     private void InitializeComponent()
     {
         grpbxClientMembership = new GroupBox();
+        lblMembershipStatus = new Label();
         lblMembershipEnd = new Label();
         lblMemberShipStart = new Label();
         lblBirthDay = new Label();
@@ -44,7 +45,6 @@ partial class Form1
         txtbxMemberShipId = new TextBox();
         btnSearchFullName = new Button();
         btnSearchMemberShipId = new Button();
-        lblMembershipStatus = new Label();
         grpbxClientMembership.SuspendLayout();
         SuspendLayout();
         // 
@@ -65,6 +65,16 @@ partial class Form1
         grpbxClientMembership.TabIndex = 0;
         grpbxClientMembership.TabStop = false;
         grpbxClientMembership.Text = "Client";
+        // 
+        // lblMembershipStatus
+        // 
+        lblMembershipStatus.AutoSize = true;
+        lblMembershipStatus.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+        lblMembershipStatus.Location = new Point(17, 534);
+        lblMembershipStatus.Name = "lblMembershipStatus";
+        lblMembershipStatus.Size = new Size(208, 28);
+        lblMembershipStatus.TabIndex = 8;
+        lblMembershipStatus.Text = "MEMBERSHIP STATUS:";
         // 
         // lblMembershipEnd
         // 
@@ -148,12 +158,12 @@ partial class Form1
         // 
         // txtbxFullName
         // 
-        txtbxFullName.Font = new Font("Segoe UI", 12F);
+        txtbxFullName.Font = new Font("Segoe UI", 20F);
         txtbxFullName.Location = new Point(26, 106);
-        txtbxFullName.Multiline = true;
         txtbxFullName.Name = "txtbxFullName";
-        txtbxFullName.Size = new Size(316, 59);
+        txtbxFullName.Size = new Size(316, 52);
         txtbxFullName.TabIndex = 1;
+        txtbxFullName.TextChanged += txtbxFullName_TextChanged;
         // 
         // lblFullName
         // 
@@ -177,11 +187,10 @@ partial class Form1
         // 
         // txtbxMemberShipId
         // 
-        txtbxMemberShipId.Font = new Font("Segoe UI", 12F);
+        txtbxMemberShipId.Font = new Font("Segoe UI", 20F);
         txtbxMemberShipId.Location = new Point(26, 291);
-        txtbxMemberShipId.Multiline = true;
         txtbxMemberShipId.Name = "txtbxMemberShipId";
-        txtbxMemberShipId.Size = new Size(316, 59);
+        txtbxMemberShipId.Size = new Size(316, 52);
         txtbxMemberShipId.TabIndex = 3;
         // 
         // btnSearchFullName
@@ -203,16 +212,6 @@ partial class Form1
         btnSearchMemberShipId.Text = "SEARCH BY MEMBERSHIP-ID";
         btnSearchMemberShipId.UseVisualStyleBackColor = true;
         btnSearchMemberShipId.Click += btnSearchMemberShipId_Click;
-        // 
-        // lblMembershipStatus
-        // 
-        lblMembershipStatus.AutoSize = true;
-        lblMembershipStatus.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-        lblMembershipStatus.Location = new Point(17, 534);
-        lblMembershipStatus.Name = "lblMembershipStatus";
-        lblMembershipStatus.Size = new Size(208, 28);
-        lblMembershipStatus.TabIndex = 8;
-        lblMembershipStatus.Text = "MEMBERSHIP STATUS:";
         // 
         // Form1
         // 
