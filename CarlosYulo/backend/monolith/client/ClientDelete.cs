@@ -23,6 +23,11 @@ public class ClientDelete : IDelete<Client>
         return DeleteClientFunction("prcClientDeleteByMembershipId", membershipId, null);
     }
 
+    public bool DeleteAllExpired()
+    {
+        return DeleteClientFunction("prcClientDeleteAllExpired", null, null);
+    }
+
 
     private bool DeleteClientFunction(string storedProcedure, int? membershipId, Client? client)
     {

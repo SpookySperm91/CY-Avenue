@@ -4,13 +4,13 @@ public class IClient {}
 
 public interface IClientCreate
 {
-    bool CreateWalkIn(Client client);
+    bool CreateWalkIn(Client client, out string message);
 }
 
 public interface IClientSearch
 {
-    Client? SearchWalkInByFullName(string fullName);
-    Client? SearchWalkInByMembershipId(int membershipId);
+    Client? SearchWalkInByFullName(string fullName, out string message);
+    Client? SearchWalkInByMembershipId(int membershipId, out string message);
 }
 
 
@@ -22,4 +22,9 @@ public interface IClientUpdate
 public interface IClientGenerate
 {
     int GenerateClientMembershipId(Client client);
+}
+
+public interface IClientEmail
+{
+    void SendMembershipExpiryEmail(Client client);
 }

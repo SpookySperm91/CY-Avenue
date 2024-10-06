@@ -1,9 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace CarlosYulo.backend;
-
-public class Common { }
-
+namespace CarlosYulo.backend.monolith.common;
 
 public static class EnumExtensions
 {
