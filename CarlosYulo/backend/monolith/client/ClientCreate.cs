@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using CarlosYulo.backend.monolith.common;
 using CarlosYulo.database;
 using MySql.Data.MySqlClient;
 
@@ -7,35 +8,47 @@ namespace CarlosYulo.backend.monolith
     public class ClientCreate : ICreate<Client>, IClientCreate
     {
         private DatabaseConnector dbConnector;
+        private ImageViewer imageViewer;
 
-        public ClientCreate(DatabaseConnector dbConnector)
+        public ClientCreate(DatabaseConnector dbConnector, ImageViewer imageViewer)
         {
             this.dbConnector = dbConnector;
+            this.imageViewer = imageViewer;
         }
 
 
-        public bool CreateWalkIn(Client client)
+        public bool CreateWalkIn(Client client, out string message)
         {
-            bool result = CreateClient(client, "Walk-in");
-            if (!result)
-                MessageBox.Show("Error creating walk-in account. Missing information", "Error", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            return result;
+            return CreateClient(client, "Walk-in", out message);
         }
 
 
-        public bool Create(Client client)
+        public bool Create(Client client, out string message)
         {
-            bool result = CreateClient(client, "Membership");
-            if (!result)
-                MessageBox.Show("Error creating membership account. Missing information", "Error", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            return result;
+            return CreateClient(client, "Membership", out message);
         }
 
 
-        private bool CreateClient(Client client, string type)
+        private bool CreateClient(Client client, string type, out string message)
         {
+            List<string> missingFields = new List<string>();
+
+            // Check for missing fields
+            ValidateBasicFields(client, missingFields);
+            ValidateAge(client, missingFields);
+            if (type.Equals("Membership", StringComparison.OrdinalIgnoreCase))
+            {
+                ValidateMembershipFields(client, missingFields);
+            }
+
+            // Create error message
+            if (missingFields.Count > 0)
+            {
+                message = "Please fill out the following missing fields: " + string.Join(", ", missingFields);
+                return false;
+            }
+
+            // Start operation
             try
             {
                 using (var connection = dbConnector.CreateConnection())
@@ -55,19 +68,27 @@ namespace CarlosYulo.backend.monolith
                             expireTime = DateTime.Now.AddDays(30);
                         }
 
+                        // Turn enum into string
                         MembershipStatus status = MembershipStatus.ACTIVE;
-                        string statusString = status.GetDescription();
+                        string statusString = status.ToString().Substring(0, 1).ToUpper() +
+                                              status.ToString().Substring(1).ToLower();
 
                         // Add the output parameter for membership ID
                         MySqlParameter outputIdParam = new MySqlParameter("p_membership_id", MySqlDbType.Int32);
                         outputIdParam.Direction = System.Data.ParameterDirection.Output;
                         command.Parameters.Add(outputIdParam);
 
-                        command.Parameters.AddWithValue("p_full_name", client.FullName);
-                        command.Parameters.AddWithValue("p_membership_type_id", client.MembershipType);
-                        command.Parameters.AddWithValue("p_email", client.Email);
-                        command.Parameters.AddWithValue("p_phone_number", client.PhoneNumber);
-                        command.Parameters.AddWithValue("p_gender", client.Gender);
+                        MySqlParameter outputMembershipParam =
+                            new MySqlParameter("p_membership", MySqlDbType.VarChar, 55);
+                        outputMembershipParam.Direction = System.Data.ParameterDirection.Output;
+                        command.Parameters.Add(outputMembershipParam);
+
+
+                        command.Parameters.AddWithValue("p_full_name", client.FullName.TrimEnd());
+                        command.Parameters.AddWithValue("p_membership_type_id", client.MembershipTypeId);
+                        command.Parameters.AddWithValue("p_email", client.Email.TrimEnd());
+                        command.Parameters.AddWithValue("p_phone_number", client.PhoneNumber.TrimEnd());
+                        command.Parameters.AddWithValue("p_gender", client.Gender.TrimEnd());
 
                         command.Parameters.AddWithValue("p_membership_start", DateTime.Now);
                         command.Parameters.AddWithValue("p_membership_end", expireTime);
@@ -90,21 +111,78 @@ namespace CarlosYulo.backend.monolith
                         int rowsAffected = command.ExecuteNonQuery();
 
                         // Retrieve the output parameter value
-                        if (outputIdParam.Value != DBNull.Value)
+                        if (outputIdParam.Value != DBNull.Value && outputMembershipParam.Value != DBNull.Value)
                         {
                             client.MembershipId = Convert.ToInt32(outputIdParam.Value);
+                            client.SetMembership(outputMembershipParam.Value != DBNull.Value
+                                ? outputMembershipParam.Value.ToString()
+                                : null);
                         }
 
                         // Return true if insert was successful, otherwise false
-                        return rowsAffected > 0;
+                        if (rowsAffected > 0)
+                        {
+                            message = "Client creation success";
+                            return true;
+                        }
+
+                        message = "Client creation failed";
+                        return false;
                     }
                 }
             }
             catch (Exception ex)
             {
-                // Handle or log the exception as needed
-                Console.WriteLine($"Error creating client: {ex.Message}");
+                message = ex.Message;
                 return false;
+            }
+        }
+
+        // Method to validate basic fields
+        private void ValidateBasicFields(Client client, List<string> missingFields)
+        {
+            if (string.IsNullOrWhiteSpace(client.FullName))
+            {
+                missingFields.Add("Full Name");
+            }
+
+            if (string.IsNullOrWhiteSpace(client.Email))
+            {
+                missingFields.Add("Email");
+            }
+
+            if (string.IsNullOrWhiteSpace(client.PhoneNumber))
+            {
+                missingFields.Add("Phone Number");
+            }
+        }
+
+        // Method to validate age
+        private void ValidateAge(Client client, List<string> missingFields)
+        {
+            if (client.Age == null || client.Age < 10)
+            {
+                missingFields.Add("Age");
+            }
+        }
+
+        // Method to validate membership-specific fields
+        private void ValidateMembershipFields(Client client, List<string> missingFields)
+        {
+            if (string.IsNullOrWhiteSpace(client.Gender))
+            {
+                missingFields.Add("Gender");
+            }
+
+            if (client.BirthDate == null)
+            {
+                missingFields.Add("Birth Date");
+            }
+
+            if (client.ProfilePicture != null && client.ProfilePicture.Length > 0 &&
+                !imageViewer.IsValidImageFormat(client.ProfilePicture))
+            {
+                missingFields.Add("Profile Picture (must be a valid PNG or JPEG)");
             }
         }
     }

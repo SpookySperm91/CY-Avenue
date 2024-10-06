@@ -13,14 +13,14 @@ public class EmployeeSearch : ISearch<Employee, int?>
         this.dbConnector = dbConnector;
     }
 
-    public Employee? SearchById(int id, int? employeeTypeId) 
+    public Employee? SearchById(int id, int? employeeTypeId, out string message)
     {
-        return SearchEmployee("prcEmployeeSearchByEmployeeId", id, null, employeeTypeId);
+        return SearchEmployee("prcEmployeeSearchByEmployeeId", id, null, employeeTypeId, out message);
     }
 
-    public Employee? SearchByFullName(string fullName, int? employeeTypeId) 
+    public Employee? SearchByFullName(string fullName, int? employeeTypeId, out string message)
     {
-        return SearchEmployee("prcEmployeeSearchByName", null, fullName, employeeTypeId);
+        return SearchEmployee("prcEmployeeSearchByName", null, fullName, employeeTypeId, out message);
     }
 
     public List<Employee> SearchAll()
@@ -28,59 +28,81 @@ public class EmployeeSearch : ISearch<Employee, int?>
         return new List<Employee>();
     }
 
-    private Employee? SearchEmployee(string storedProcedure, int? employeeId, string? fullName, int? employeeTypeId)
+    private Employee? SearchEmployee(string storedProcedure, int? employeeId, string? fullName, int? employeeTypeId,
+        out string message)
     {
         Employee? employee = null;
+        message = string.Empty;
 
         using (var connection = dbConnector.CreateConnection())
         {
-            // Open the connection
-            connection.Open();
-
-            using (var command = new MySqlCommand(storedProcedure, connection))
+            try
             {
-                command.CommandType = CommandType.StoredProcedure;
+                // Open the connection
+                connection.Open();
 
-                // Add parameters based on search type
-                if (employeeId.HasValue)
+                using (var command = new MySqlCommand(storedProcedure, connection))
                 {
-                    command.Parameters.AddWithValue("p_employee_id", employeeId.Value);
-                }
-                else if (!string.IsNullOrEmpty(fullName))
-                {
-                    command.Parameters.AddWithValue("p_employee_full_name", fullName);
-                }
+                    command.CommandType = CommandType.StoredProcedure;
 
-                // Gender parameter (common to both procedures)
-                command.Parameters.AddWithValue("p_employee_type_id",
-                    employeeTypeId.HasValue? employeeTypeId.Value : employeeTypeId);
+                    // Add parameters based on search type
+                    if (employeeId.HasValue)
+                    {
+                        command.Parameters.AddWithValue("p_employee_id", employeeId.Value);
+                    }
+                    else if (!string.IsNullOrEmpty(fullName))
+                    {
+                        command.Parameters.AddWithValue("p_employee_full_name", fullName);
+                    }
 
-                try
-                {
+                    // Add employeeTypeId parameter
+                    command.Parameters.AddWithValue("p_employee_type_id",
+                        employeeTypeId.HasValue ? employeeTypeId.Value : employeeTypeId);
+
                     using (var reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            employee = new Employee();
-                            employee.EmployeeFullName = reader["full_name"].ToString();
-                            employee.EmployeeId = Convert.ToInt32(reader["employee_id"]);
-                            employee.Email = reader["email"].ToString();
-                            employee.PhoneNumber = reader["phone_number"].ToString();
-                            employee.Age = Convert.ToInt32(reader["age"]);
-                            employee.Gender = reader["gender"].ToString();
-                            // employee.MembershipStart = Convert.ToDateTime(reader["membership_start"]);
-                            // employee.MembershipEnd = Convert.ToDateTime(reader["membership_end"]);
-                            // client.MembershipStatus = reader["membership_status"].ToString();
+                            employee = new Employee
+                            {
+                                EmployeeFullName = reader["full_name"] is DBNull ? null : reader["full_name"].ToString(),
+                                EmployeeId = reader["employee_id"] is DBNull ? null : Convert.ToInt32(reader["employee_id"]),
+                                Email = reader["email"] is DBNull ? null : reader["email"].ToString(),
+                                PhoneNumber = reader["phone_number"] is DBNull ? null : reader["phone_number"].ToString(),
+                                Age = reader["age"] is DBNull ? null : Convert.ToInt32(reader["age"]),
+                                Gender = reader["gender"] is DBNull ? null : reader["gender"].ToString(),
+                                ProfilePicture = reader["profile_pic"] is DBNull ? null : (byte[])reader["profile_pic"]
+                            };
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error fetching client: {ex.Message}");
-                }
+            }
+            catch (Exception ex)
+            {
+                message = $"Error fetching employee: {ex.Message}";
             }
         }
 
+        if (employee == null)
+        {
+            // If client is null, show an appropriate message based on what's available
+            if (!string.IsNullOrWhiteSpace(fullName))
+            {
+                message = "Employee username: " + fullName + " cannot be found";
+            }
+            else if (employeeId.HasValue)
+            {
+                message = "Employee ID: " + employeeId.Value + " cannot be found";
+            }
+            else
+            {
+                message = "Employee not found";
+            }
+
+            return employee;
+        }
+
+        message = "Employee found";
         return employee;
     }
 }

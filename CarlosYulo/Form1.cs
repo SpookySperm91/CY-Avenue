@@ -1,43 +1,56 @@
 using CarlosYulo.backend;
 using CarlosYulo.backend.monolith;
 using CarlosYulo.backend.monolith.common;
+using CarlosYulo.backend.monolith.employee;
 using CarlosYulo.database;
 
 namespace CarlosYulo;
 
 public partial class Form1 : Form
 {
+    // WARNING, WARNING, WARNING
+    // BELOW AND BEYOND ARE TEST AND NOT SUBJECT TO FINAL PRODUCT
+    // Testing all concrete and service class
+    //
     ClientService clientService;
-    EmailMessage email;
-    
-    
-    public Form1(ClientService clientService, EmailMessage email)
+    IClientEmail email;
+    ClientSearch clientSearch;
+    SystemAccountSearch systemAccountSearch;
+    SystemAccountDelete systemAccountDelete;
+    SystemAccountCreate systemAccountCreate;
+    EmployeeService employeeService;
+
+    public Form1(ClientService clientService, ClientEmail email, ClientSearch clientSearch,
+        SystemAccountSearch systemAccountSearch, SystemAccountDelete systemAccountDelete,
+        SystemAccountCreate systemAccountCreate, EmployeeService employeeService)
     {
         InitializeComponent();
         this.clientService = clientService;
         this.email = email;
+        this.clientSearch = clientSearch;
+        this.systemAccountSearch = systemAccountSearch;
+        this.systemAccountDelete = systemAccountDelete;
+        this.systemAccountCreate = systemAccountCreate;
+        this.employeeService = employeeService;
     }
 
     private void btnSearchFullName_Click(object sender, EventArgs e)
     {
-        Client? client = clientService.SearchClientByFullName(txtbxFullName.Text, null);
-
+        Employee? employee = employeeService.SearchEmployeeByFullName(txtbxFullName.Text, null);
         try
         {
-            if (client != null)
+            if (employee != null)
             {
-                lblName.Text = client.FullName;
-                lblMemberShipId.Text = client.MembershipId.ToString();
-                lblEmail.Text = client.Email;
-                lblPhoneNumber.Text = client.PhoneNumber;
-                lblGender.Text = client.Gender;
-                lblAge.Text = client.Age.ToString();
-                lblMemberShipStart.Text = client.MembershipStart.ToString("MM/dd/yyyy");
-                lblMembershipEnd.Text = client.MembershipEnd.ToString("MM/dd/yyyy");
+                lblName.Text = employee.EmployeeFullName;
+                lblMemberShipId.Text = employee.EmployeeId.ToString();
+                lblEmail.Text = employee.Email;
+                lblPhoneNumber.Text = employee.PhoneNumber;
+                lblGender.Text = employee.Gender;
+                lblAge.Text = employee.Age.ToString();
+                lblMemberShipStart.Text = employee.Birthday?.ToString("MM/dd/yyyy");
+                // lblMembershipEnd.Text = Employee.MembershipEnd?.ToString("MM/dd/yyyy");
                 return;
             }
-
-            MessageBox.Show($"Client does not exist!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         catch (Exception exception)
         {
@@ -49,21 +62,31 @@ public partial class Form1 : Form
 
     private void btnSearchMemberShipId_Click(object sender, EventArgs e)
     {
-        try
-        {
-            email.SentHtmlEmail("Arima Kana", "jhonandriecanedo1@gmail.com", "This is a Test!");
-            // MessageBox.Show($"An error occurred: {ex.Message}");
+        // Client? client = clientService.SearchClientByFullName("John Doe", null);
+        // List<Client> allClient = clientSearch.SearchAll();
 
-        }
-        catch (Exception ex)
+        Client newClient = new Client()
         {
-            MessageBox.Show($"An error occurred: {ex.Message}");
+            MembershipTypeId = 1,
+            FullName = "Akane Kurokawa",
+            Email = "akane.kurokawa@oshino.ko",
+            PhoneNumber = "08888888888",
+            Gender = "Female",
+            Age = 19,
+            BirthDate = new DateTime(2005, 8, 3)
+        };
+
+        clientService.CreateClient(newClient);
+
+
+        List<Client> clients = clientService.SearchAllMembersClient();
+        foreach (Client client in clients)
+        {
+            Console.WriteLine(newClient.ToString());
         }
     }
 
+    private void txtbxFullName_TextChanged(object sender, EventArgs e)
+    {
+    }
 }
-
-
-
-
-      

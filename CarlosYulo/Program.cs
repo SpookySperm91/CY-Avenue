@@ -24,6 +24,7 @@ namespace CarlosYulo
             var serviceProvider = services.BuildServiceProvider();
 
             var dbConnector = serviceProvider.GetService<DatabaseConnector>();
+            
             if (dbConnector.TestConnection())
             {
                 Console.WriteLine("Connection successful!");
@@ -59,30 +60,40 @@ namespace CarlosYulo
                         "123456",
                         "3306"));
 
-            // Concrete classes
+            // Client Concrete Classes
             services.AddScoped<ICreate<Client>, ClientCreate>();
             services.AddScoped<IUpdate<Client>, ClientUpdate>();
             services.AddScoped<IDelete<Client>, ClientDelete>();
             services.AddScoped<ISearch<Client, string>, ClientSearch>();
             services.AddScoped<IClientUpdate, ClientUpdate>();
             services.AddScoped<IClientCreate, ClientCreate>();
+            services.AddScoped<IClientEmail, ClientEmail>();
             
-            // services.AddScoped<ICreate<Employee>, ClientCreate>();
-            // services.AddScoped<IUpdate<Employee>, ClientUpdate>();
-            // services.AddScoped<IDelete<Employee>, EmployeeDelete>();
+            // Employee Concrete Classes
             services.AddScoped<ISearch<Employee, int?>, EmployeeSearch>();
             
-            // ClientService class
-            //services.AddScoped<IClientService, ClientService>();
+            // SystemAccount Concrete Classes
+            services.AddScoped<IDelete<SystemAccount>, SystemAccountDelete>();
+            services.AddScoped<ICreate<SystemAccount>, SystemAccountCreate>();
+            
+            // Concrete Classes
+            services.AddScoped<ClientSearch>();
+            services.AddScoped<PasswordHashing>();
+            services.AddScoped<SystemAccountSearch>();
+            services.AddScoped<SystemAccountDelete>();
+            services.AddScoped<SystemAccountCreate>();
+            services.AddScoped<ImageViewer>();
+            
+            // Register EmailSendBase to its concrete class
+            services.AddScoped<EmailSendBase, ClientEmail>();
+            services.AddScoped<ClientEmail>();
+            
+            // Register your services
             services.AddScoped<ClientService>();
-            
-            // EmployeeService class
             services.AddScoped<EmployeeService>();
-
-            // Email class
-            services.AddScoped<EmailMessage>();
-
+            services.AddScoped<Form1>();
             
+            // Form 1
             services.AddScoped<Form1>();
         }
     }

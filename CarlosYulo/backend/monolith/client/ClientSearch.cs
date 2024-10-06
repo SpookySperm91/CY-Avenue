@@ -13,68 +13,97 @@ public class ClientSearch : ISearch<Client, string>, IClientSearch
         this.dbConnector = dbConnector;
     }
 
-    public Client? SearchById(int membershipId, string? gender)
+    // SEARCH MEMBERSHIP BY ID
+    public Client? SearchById(int membershipId, string? gender, out string message)
     {
-        return SearchClient("prcClientSearchByMembershipId", membershipId, null, gender, "Member");
+        return SearchClient("prcClientSearchByMembershipId", membershipId, null, gender, "Member", out message);
     }
 
-    public Client? SearchByFullName(string fullName, string? gender)
+    // SEARCH MEMBERSHIP BY FULL NAME
+    public Client? SearchByFullName(string fullName, string? gender, out string message)
     {
-        return SearchClient("prcClientSearchByName", null, fullName, gender, "Member");
+        return SearchClient("prcClientSearchByName", null, fullName, gender, "Member", out message);
     }
 
-    public Client? SearchWalkInByMembershipId(int membershipId)
+    // SEARCH WALK-IN MEMBERSHIP BY ID
+    public Client? SearchWalkInByMembershipId(int membershipId, out string message)
     {
-        return SearchClient("prcClientSearchByMembershipId", membershipId, null, null, "Walk-in");
+        return SearchClient("prcClientSearchByMembershipId", membershipId, null, null, "Walk-in", out message);
     }
 
-    public Client? SearchWalkInByFullName(string fullName)
+    // SEARCH WALK-IN BY FULL NAME
+    public Client? SearchWalkInByFullName(string fullName, out string message)
     {
-        return SearchClient("prcClientSearchByName", null, fullName, null, "Walk-in");
+        return SearchClient("prcClientSearchByName", null, fullName, null, "Walk-in", out message);
     }
 
 
     public List<Client> SearchAll()
     {
-        var clients = new List<Client>();
+        List<Client> clients = new List<Client>();
 
-        using (var connection = dbConnector.CreateConnection())
+        try
         {
-            connection.Open();
-
-            using (var command = new MySqlCommand("prcGetAllClients", connection))
+            using (var connection = dbConnector.CreateConnection())
             {
-                command.CommandType = CommandType.StoredProcedure;
+                connection.Open();
 
-                using (var reader = command.ExecuteReader())
+                using (var command = new MySqlCommand("prcClientSearchAllByMembership", connection))
                 {
-                    while (reader.Read())
-                    {
-                        var client = new Client
-                        {
-                            FullName = reader["full_name"].ToString(),
-                            MembershipId = Convert.ToInt32(reader["membership_id"]),
-                            Email = reader["email"].ToString(),
-                            PhoneNumber = reader["phone_number"].ToString(),
-                            MembershipStart = Convert.ToDateTime(reader["membership_start"]),
-                            MembershipEnd = Convert.ToDateTime(reader["membership_end"]),
-                            MembershipStatus = reader["membership_status"].ToString(),
-                            Age = Convert.ToInt32(reader["age"]),
-                            Gender = reader["gender"].ToString(),
-                            ProfilePicture = reader["profile_picture"].ToString()
-                        };
+                    command.CommandType = CommandType.StoredProcedure;
 
-                        clients.Add(client);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Client client = new Client
+                            {
+                                FullName = reader["full_name"] is DBNull ? null : reader["full_name"].ToString(),
+                                MembershipId = reader["membership_id"] is DBNull
+                                    ? 0
+                                    : Convert.ToInt32(reader["membership_id"]),
+                                MembershipTypeId = reader["membership_type_id"] is DBNull
+                                    ? 0
+                                    : Convert.ToInt32(reader["membership_type_id"]),
+                                Email = reader["email"] is DBNull ? null : reader["email"].ToString(),
+                                PhoneNumber = reader["phone_number"] is DBNull
+                                    ? null
+                                    : reader["phone_number"].ToString(),
+
+                                BirthDate =
+                                    reader["birthday"] is DBNull ? null : Convert.ToDateTime(reader["birthday"]),
+                                Age = reader["age"] is DBNull ? 0 : Convert.ToInt32(reader["age"]),
+                                Gender = reader["gender"] is DBNull ? null : reader["gender"].ToString(),
+                                ProfilePicture = reader["profile_pic"] is DBNull ? null : (byte[])reader["profile_pic"],
+                                MembershipStart = reader["membership_start"] is DBNull
+                                    ? null
+                                    : Convert.ToDateTime(reader["membership_start"]),
+                                MembershipEnd = reader["membership_end"] is DBNull
+                                    ? null
+                                    : Convert.ToDateTime(reader["membership_end"]),
+                                MembershipStatus = reader["membership_status"] is DBNull
+                                    ? null
+                                    : reader["membership_status"].ToString()
+                            };
+                            client.SetMembership(
+                                reader["membership"] is DBNull ? null : reader["membership"].ToString());
+
+                            clients.Add(client);
+                        }
                     }
                 }
             }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occurred: " + ex.Message);
         }
 
         return clients;
     }
 
-
-    private Client? SearchClient(string storedProcedure, int? membershipId, string? fullName, string? gender, string type)
+    private Client? SearchClient(string storedProcedure, int? membershipId, string? fullName, string? gender,
+        string type, out string message)
     {
         Client? client = null;
 
@@ -113,6 +142,7 @@ public class ClientSearch : ISearch<Client, string>, IClientSearch
                             client.Email = reader["email"].ToString();
                             client.PhoneNumber = reader["phone_number"].ToString();
 
+
                             client.MembershipStart = Convert.ToDateTime(reader["membership_start"]);
                             client.MembershipEnd = Convert.ToDateTime(reader["membership_end"]);
                             client.MembershipStatus = reader["membership_status"].ToString();
@@ -121,7 +151,9 @@ public class ClientSearch : ISearch<Client, string>, IClientSearch
                             {
                                 client.Age = Convert.ToInt32(reader["age"]);
                                 client.Gender = reader["gender"].ToString();
-                                client.ProfilePicture = reader["profile_picture"].ToString();
+                                client.ProfilePicture = reader["profile_pic"] is DBNull
+                                    ? null
+                                    : (byte[])reader["profile_pic"];
                             }
                         }
                     }
@@ -133,6 +165,28 @@ public class ClientSearch : ISearch<Client, string>, IClientSearch
             }
         }
 
+        // RETURN FAIL
+        if (client == null)
+        {
+            // If client is null, show an appropriate message based on what's available
+            if (!string.IsNullOrWhiteSpace(fullName))
+            {
+                message = "Client: " + fullName + " not found";
+            }
+            else if (membershipId.HasValue)
+            {
+                message = "Client ID: " + membershipId.Value + " cannot be found";
+            }
+            else
+            {
+                message = "Client cannot be found";
+            }
+
+            return client;
+        }
+
+        // RETURN SUCCESS
+        message = "Client successfully fetched";
         return client;
     }
 }

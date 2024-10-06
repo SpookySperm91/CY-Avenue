@@ -6,12 +6,12 @@ public class Interface
 
 public interface ICreate<T>
 {
-    bool Create(T entity);
+    bool Create(T entity, out string message);
 }
 public interface ISearch<T, TVar>
 {
-    T? SearchById(int id, TVar? variable);
-    T? SearchByFullName(string fullName, TVar? variable);
+    T? SearchById(int id, TVar? variable, out string message);
+    T? SearchByFullName(string fullName, TVar? variable, out string message);
     List<T> SearchAll();
 }
 
