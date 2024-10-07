@@ -93,25 +93,21 @@ public class ClientService
             MessageBox.Show("Client is null", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
-
-        try
+        if (client.MembershipTypeId == 3 || client.MembershipTypeId == 4)
         {
-            string message;
-            bool result = ClientUpdate.UpdateProfilePicture(client, picture, out message);
-            if (!result)
-            {
-                MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Non-members cannot set profile picture", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
         }
-        catch (Exception e)
+        
+        string message;
+        bool result = ClientUpdate.UpdateProfilePicture(client, picture, out message);
+        if (!result)
         {
-            Console.WriteLine(e);
-            MessageBox.Show("An unexpected error occurred: " + e.Message, "Exception Error", MessageBoxButtons.OK,
-                MessageBoxIcon.Error);
+            MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
         }
+
+        MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     public bool UpdateClientMembershipType(Client client, MembershipType membershipType)
@@ -121,8 +117,23 @@ public class ClientService
             MessageBox.Show("Client is null", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return false;
         }
-        
-        return IClientUpdate.UpdateClientMembershipType(client, membershipType);
+
+        if (membershipType == MembershipType.WALK_IN || membershipType == MembershipType.WALK_IN_TREADMILL)
+        {
+            MessageBox.Show("Error creating account. Invalid membership type.", "Error", MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+            return false;
+        }
+
+        string message;
+        bool result = IClientUpdate.UpdateClientMembershipType(client, membershipType, out message);
+
+        if (!result)
+        {
+            MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        return result;
     }
 
 

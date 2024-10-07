@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using CarlosYulo.backend.monolith.common;
 using CarlosYulo.database;
 using MySql.Data.MySqlClient;
 
@@ -7,10 +8,12 @@ namespace CarlosYulo.backend.monolith;
 public class ClientSearch : ISearch<Client, string>, IClientSearch
 {
     private readonly DatabaseConnector dbConnector;
+    private readonly ImageViewer imageViewer;
 
     public ClientSearch(DatabaseConnector dbConnector)
     {
         this.dbConnector = dbConnector;
+        imageViewer = new ImageViewer();
     }
 
     // SEARCH MEMBERSHIP BY ID
@@ -55,7 +58,7 @@ public class ClientSearch : ISearch<Client, string>, IClientSearch
         {
             storedProcedure = "prcClientSearchAll";
         }
-        
+
         try
         {
             using (var connection = dbConnector.CreateConnection())
@@ -111,10 +114,11 @@ public class ClientSearch : ISearch<Client, string>, IClientSearch
                                     ? null
                                     : (byte[])reader["profile_pic"];
                                 client.Gender = reader["gender"] is DBNull ? null : reader["gender"].ToString();
+                                client.SetProfilePicture(imageViewer.ConvertByteArrayToImage(client.ProfilePictureByte));
                             }
 
-                            client.SetMembership(
-                                reader["membership"] is DBNull ? null : reader["membership"].ToString());
+                            client.SetMembership(reader["membership"] is DBNull ? null : reader["membership"].ToString());
+
 
                             clients.Add(client);
                         }
@@ -126,6 +130,7 @@ public class ClientSearch : ISearch<Client, string>, IClientSearch
         {
             Console.WriteLine("An error occurred: " + ex.Message);
         }
+
         return clients;
     }
 
@@ -166,6 +171,7 @@ public class ClientSearch : ISearch<Client, string>, IClientSearch
                             client = new Client();
                             client.FullName = reader["full_name"].ToString();
                             client.MembershipId = Convert.ToInt32(reader["membership_id"]);
+                            client.MembershipTypeId = Convert.ToInt32(reader["membership_type_id"]);
                             client.Email = reader["email"].ToString();
                             client.PhoneNumber = reader["phone_number"].ToString();
 
@@ -181,7 +187,11 @@ public class ClientSearch : ISearch<Client, string>, IClientSearch
                                 client.ProfilePictureByte = reader["profile_pic"] is DBNull
                                     ? null
                                     : (byte[])reader["profile_pic"];
+                                client.SetProfilePicture(imageViewer.ConvertByteArrayToImage(client.ProfilePictureByte));
                             }
+
+                            client.SetMembership(
+                                reader["membership"] is DBNull ? null : reader["membership"].ToString());
                         }
                     }
                 }

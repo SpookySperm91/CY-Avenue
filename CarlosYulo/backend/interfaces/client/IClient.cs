@@ -16,7 +16,7 @@ public interface IClientSearch
 
 public interface IClientUpdate
 {
-    bool UpdateClientMembershipType(Client client, MembershipType membership);
+    bool UpdateClientMembershipType(Client client, MembershipType membership, out string message);
 }
 
 public interface IClientGenerate

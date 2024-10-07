@@ -60,11 +60,12 @@ public class Client
                $"Membership Status: {MembershipStatus}, " +
                $"Age: {Age}, " +
                $"Gender: {Gender}, " +
-               $"Profile Picture: {(ProfilePictureByte != null ? $"{ProfilePictureByte.Length} bytes" : "N/A")}";
+               $"Profile Picture Byte: {(ProfilePictureByte != null ? $"{ProfilePictureByte.Length} bytes" : "N/A")}, " +
+               $"Profile Picture: {ProfilePictureImage}";
     }
 
     // Set string picture path into byte and save to ProfilePicture
-    public void SetProfilePicture(string profilePicturePath)
+    public bool SetProfilePicture(string profilePicturePath, out string message)
     {
         try
         {
@@ -74,24 +75,33 @@ public class Client
             {
                 ProfilePictureImage = _imageViewer.ConvertByteArrayToImage(formattedProfilePicture);
                 ProfilePictureByte = formattedProfilePicture;
+                message = "Profile Picture Set";
+                return true;
             }
-            else
-            {
-                throw new InvalidDataException("Invalid image format. Only PNG and JPEG are supported.");
-            }
+
+            message = "Profile picture could not be loaded. Invalid image format. Only PNG and JPEG are supported.";
+            return false;
         }
         catch (FileNotFoundException ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
+            message = ex.Message;
+            return false;
         }
         catch (InvalidDataException ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
+            message = ex.Message;
+            return false;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"An unexpected error occurred: {ex.Message}");
+            message = ex.Message;
+            return false;
         }
+    }
+
+    public void SetProfilePicture(Image? profilePictureImage)
+    {
+        ProfilePictureImage = profilePictureImage;
     }
 
     public void SetMembership(string membershipType)

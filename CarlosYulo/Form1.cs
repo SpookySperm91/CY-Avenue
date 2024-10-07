@@ -15,7 +15,7 @@ public partial class Form1 : Form
     //
     ClientService clientService;
     ClientCreateTest createTest;
-    
+
 
     // List of all client 
     private List<Client> clients;
@@ -136,20 +136,24 @@ public partial class Form1 : Form
             throw;
         }
     }
+    protected Client? client;
 
     private void btnSearchMemberShipId_Click(object sender, EventArgs e)
     {
-        // Client? client = clientService.SearchClientByFullName("John Doe", null);
-        // List<Client> allClient = clientSearch.SearchAll();
+        client = clientService.SearchClientByFullName(txtbxMemberShipId.Text, null);
+        Console.WriteLine(client.ToString());
 
-        OpenFileDialog openFileDialog = new OpenFileDialog();
-        if (openFileDialog.ShowDialog() == DialogResult.OK)
-        {
-            pictureBox1.Image = new Bitmap(openFileDialog.FileName);
-        }
+        // OpenFileDialog openFileDialog = new OpenFileDialog();
+        // if (openFileDialog.ShowDialog() == DialogResult.OK)
+        // {
+        // clientService.UpdateClientProfilePicture(client, openFileDialog.FileName);
+        // Console.WriteLine("UPDATED WITH PROFILE PICTURE");
+        //   Console.WriteLine(client.ToString());
+        pictureBox1.Image = client.ProfilePictureImage;
+        // }
 
-        createTest.Test1();
-        Form1_Load( sender,  e);
+        // createTest.Test1();
+        //Form1_Load(sender, e);
     }
 
     private void txtbxFullName_TextChanged(object sender, EventArgs e)
@@ -158,8 +162,14 @@ public partial class Form1 : Form
 
     private void table1_CellContentClick(object sender, DataGridViewCellEventArgs e)
     {
-
     }
 
-
+    private void btnUpdateProfile_Click(object sender, EventArgs e)
+    {
+        OpenFileDialog openFileDialog = new OpenFileDialog();
+        if (openFileDialog.ShowDialog() == DialogResult.OK)
+        {
+            clientService.UpdateClientProfilePicture(client, openFileDialog.FileName);
+        }
+    }
 }

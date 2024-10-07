@@ -2,21 +2,34 @@
 
 public class ImageViewer
 {
-    public Image ConvertByteArrayToImage(byte[] imageData)
+    public Image? ConvertByteArrayToImage(byte[]? imageData)
     {
+        // Check for null or empty input
+        if (imageData == null || imageData.Length == 0)
+        {
+            Console.WriteLine("No image data provided.");
+            return null; // Return null if there's no data
+        }
+
         try
         {
             using (var ms = new MemoryStream(imageData))
             {
-                return Image.FromStream(ms);
+                return Image.FromStream(ms, true, true); // Keep the stream open
             }
         }
         catch (ArgumentException ex)
         {
             Console.WriteLine($"Invalid image data: {ex.Message}");
-            throw;
+            return null; // Return null in case of an error
+        }
+        catch (Exception ex) // Catch any other potential exceptions
+        {
+            Console.WriteLine($"An error occurred while converting byte array to image: {ex.Message}");
+            return null; // Return null for unexpected errors
         }
     }
+
 
     public byte[] LoadProfilePicture(string imagePath)
     {

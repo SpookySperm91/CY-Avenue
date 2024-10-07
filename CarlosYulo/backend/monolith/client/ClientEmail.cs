@@ -15,14 +15,16 @@ public class ClientEmail : EmailSendBase, IClientEmail
         if (string.IsNullOrWhiteSpace(client.Email) || string.IsNullOrWhiteSpace(client.FullName) 
                                                     || client.MembershipTypeId >=3 & client.MembershipTypeId < 1)
         {
-            throw new ArgumentException("Email, username, and membership type must not be null or empty.");
+            MessageBox.Show("Email, username, and membership type must not be null or empty or invalid.");
+            throw new ArgumentException("Email, username, and membership type must not be null or empty or invalid.");
         }
 
-        switch (client.MembershipTypeId)
+        membershipType = client.MembershipTypeId switch
         {
-            case 1: membershipType = "Accessibility"; break;
-            case 2: membershipType = "VIP"; break;
-        }
+            1 => "Accessibility",
+            2 => "Premium",
+            _ => throw new ArgumentException("Invalid membership type.")
+        };
         
         expiryDate = client.MembershipEnd?.ToString("MMMM dd, yyyy"); // e.g., "August 03, 2024"
         Subject = "Membership Expiration Notification"; 

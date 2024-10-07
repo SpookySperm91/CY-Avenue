@@ -48,6 +48,7 @@ partial class Form1
         btnSearchMemberShipId = new Button();
         table1 = new DataGridView();
         pictureBox1 = new PictureBox();
+        btnUpdateProfile = new Button();
         grpbxClientMembership.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)table1).BeginInit();
         ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -210,7 +211,7 @@ partial class Form1
         // 
         // btnSearchMemberShipId
         // 
-        btnSearchMemberShipId.Location = new Point(26, 369);
+        btnSearchMemberShipId.Location = new Point(12, 372);
         btnSearchMemberShipId.Name = "btnSearchMemberShipId";
         btnSearchMemberShipId.Size = new Size(206, 56);
         btnSearchMemberShipId.TabIndex = 6;
@@ -239,11 +240,22 @@ partial class Form1
         pictureBox1.TabIndex = 8;
         pictureBox1.TabStop = false;
         // 
+        // btnUpdateProfile
+        // 
+        btnUpdateProfile.Location = new Point(229, 372);
+        btnUpdateProfile.Name = "btnUpdateProfile";
+        btnUpdateProfile.Size = new Size(191, 56);
+        btnUpdateProfile.TabIndex = 9;
+        btnUpdateProfile.Text = "UPDATE PROFILE PICTURE";
+        btnUpdateProfile.UseVisualStyleBackColor = true;
+        btnUpdateProfile.Click += btnUpdateProfile_Click;
+        // 
         // Form1
         // 
         AutoScaleDimensions = new SizeF(8F, 20F);
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(1754, 786);
+        Controls.Add(btnUpdateProfile);
         Controls.Add(pictureBox1);
         Controls.Add(table1);
         Controls.Add(btnSearchMemberShipId);
@@ -283,4 +295,5 @@ partial class Form1
     private Label lblMembershipStatus;
     private DataGridView table1;
     private PictureBox pictureBox1;
+    private Button btnUpdateProfile;
 }

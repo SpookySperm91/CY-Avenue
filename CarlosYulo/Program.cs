@@ -16,7 +16,6 @@ namespace CarlosYulo
         [STAThread]
         static void Main()
         {
-            // Initialize application configurations and run the form
             ApplicationConfiguration.Initialize();
 
             var services = new ServiceCollection();
@@ -25,7 +24,6 @@ namespace CarlosYulo
             var serviceProvider = services.BuildServiceProvider();
 
             var dbConnector = serviceProvider.GetService<DatabaseConnector>();
-            
             if (dbConnector.TestConnection())
             {
                 Console.WriteLine("Connection successful!");
@@ -35,7 +33,6 @@ namespace CarlosYulo
                 Console.WriteLine("Failed to connect to the database.");
                 return; // Exit the application if the connection fails
             }
-
 
             var mainForm = serviceProvider.GetService<Form1>();
             if (mainForm != null)
@@ -69,14 +66,14 @@ namespace CarlosYulo
             services.AddScoped<IClientUpdate, ClientUpdate>();
             services.AddScoped<IClientCreate, ClientCreate>();
             services.AddScoped<IClientEmail, ClientEmail>();
-            
+
             // Employee Concrete Classes
             services.AddScoped<ISearch<Employee, int?>, EmployeeSearch>();
-            
+
             // SystemAccount Concrete Classes
             services.AddScoped<IDelete<SystemAccount>, SystemAccountDelete>();
             services.AddScoped<ICreate<SystemAccount>, SystemAccountCreate>();
-            
+
             // Concrete Classes
             services.AddScoped<ClientSearch>();
             services.AddScoped<PasswordHashing>();
@@ -84,20 +81,20 @@ namespace CarlosYulo
             services.AddScoped<SystemAccountDelete>();
             services.AddScoped<SystemAccountCreate>();
             services.AddScoped<ImageViewer>();
-            
+
             // Test Classes
             services.AddScoped<ClientCreateTest>();
-            
-            
+
+
             // Register EmailSendBase to its concrete class
             services.AddScoped<EmailSendBase, ClientEmail>();
             services.AddScoped<ClientEmail>();
-            
+
             // Register your services
             services.AddScoped<ClientService>();
             services.AddScoped<EmployeeService>();
             services.AddScoped<Form1>();
-            
+
             // Form 1
             services.AddScoped<Form1>();
         }

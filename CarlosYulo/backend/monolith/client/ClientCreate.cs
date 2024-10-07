@@ -13,7 +13,7 @@ namespace CarlosYulo.backend.monolith
         public ClientCreate(DatabaseConnector dbConnector)
         {
             this.dbConnector = dbConnector;
-            this.imageViewer = new ImageViewer();
+            imageViewer = new ImageViewer();
         }
 
         // create new walk-in client
@@ -137,6 +137,17 @@ namespace CarlosYulo.backend.monolith
                 return false;
             }
         }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
         // Method to validate basic fields
         private void ValidateBasicFields(Client client, List<string> missingFields)
