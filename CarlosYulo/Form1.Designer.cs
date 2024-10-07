@@ -29,6 +29,7 @@ partial class Form1
     /// </summary>
     private void InitializeComponent()
     {
+        DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
         grpbxClientMembership = new GroupBox();
         lblMembershipStatus = new Label();
         lblMembershipEnd = new Label();
@@ -45,7 +46,9 @@ partial class Form1
         txtbxMemberShipId = new TextBox();
         btnSearchFullName = new Button();
         btnSearchMemberShipId = new Button();
+        table1 = new DataGridView();
         grpbxClientMembership.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)table1).BeginInit();
         SuspendLayout();
         // 
         // grpbxClientMembership
@@ -213,11 +216,24 @@ partial class Form1
         btnSearchMemberShipId.UseVisualStyleBackColor = true;
         btnSearchMemberShipId.Click += btnSearchMemberShipId_Click;
         // 
+        // table1
+        // 
+        dataGridViewCellStyle1.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+        table1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+        table1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+        table1.Location = new Point(805, 12);
+        table1.Name = "table1";
+        table1.RowHeadersWidth = 51;
+        table1.Size = new Size(937, 604);
+        table1.TabIndex = 7;
+        table1.CellContentClick += table1_CellContentClick;
+        // 
         // Form1
         // 
         AutoScaleDimensions = new SizeF(8F, 20F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(822, 628);
+        ClientSize = new Size(1754, 628);
+        Controls.Add(table1);
         Controls.Add(btnSearchMemberShipId);
         Controls.Add(btnSearchFullName);
         Controls.Add(lblMemberShipId);
@@ -229,6 +245,7 @@ partial class Form1
         Text = "Form1";
         grpbxClientMembership.ResumeLayout(false);
         grpbxClientMembership.PerformLayout();
+        ((System.ComponentModel.ISupportInitialize)table1).EndInit();
         ResumeLayout(false);
         PerformLayout();
     }
@@ -251,4 +268,5 @@ partial class Form1
     private Button btnSearchFullName;
     private Button btnSearchMemberShipId;
     private Label lblMembershipStatus;
+    private DataGridView table1;
 }

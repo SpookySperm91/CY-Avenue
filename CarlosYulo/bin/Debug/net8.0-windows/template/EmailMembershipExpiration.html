@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership Expiration Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #555;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">Membership Expiration Notice</div>
+    <div class="message">
+        Hello <span id="username-placeholder"></span>, from <b>CY-Avenue</b>,<br><br>
+        Your <span id="membership-type-placeholder"></span> membership is about to expire on <span id="expiry-date-placeholder"></span>.
+    </div>
+    <div class="footer">
+        Thank you for being a valued member of CY-Avenue. Please renew your membership to continue enjoying our services.
+    </div>
+</div>
+</body>
+</html>
