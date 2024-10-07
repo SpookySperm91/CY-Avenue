@@ -47,8 +47,10 @@ partial class Form1
         btnSearchFullName = new Button();
         btnSearchMemberShipId = new Button();
         table1 = new DataGridView();
+        pictureBox1 = new PictureBox();
         grpbxClientMembership.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)table1).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
         SuspendLayout();
         // 
         // grpbxClientMembership
@@ -228,11 +230,21 @@ partial class Form1
         table1.TabIndex = 7;
         table1.CellContentClick += table1_CellContentClick;
         // 
+        // pictureBox1
+        // 
+        pictureBox1.Location = new Point(65, 487);
+        pictureBox1.Name = "pictureBox1";
+        pictureBox1.Size = new Size(277, 212);
+        pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+        pictureBox1.TabIndex = 8;
+        pictureBox1.TabStop = false;
+        // 
         // Form1
         // 
         AutoScaleDimensions = new SizeF(8F, 20F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(1754, 628);
+        ClientSize = new Size(1754, 786);
+        Controls.Add(pictureBox1);
         Controls.Add(table1);
         Controls.Add(btnSearchMemberShipId);
         Controls.Add(btnSearchFullName);
@@ -246,6 +258,7 @@ partial class Form1
         grpbxClientMembership.ResumeLayout(false);
         grpbxClientMembership.PerformLayout();
         ((System.ComponentModel.ISupportInitialize)table1).EndInit();
+        ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
         ResumeLayout(false);
         PerformLayout();
     }
@@ -269,4 +282,5 @@ partial class Form1
     private Button btnSearchMemberShipId;
     private Label lblMembershipStatus;
     private DataGridView table1;
+    private PictureBox pictureBox1;
 }

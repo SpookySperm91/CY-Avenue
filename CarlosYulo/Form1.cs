@@ -2,6 +2,7 @@ using CarlosYulo.backend;
 using CarlosYulo.backend.monolith;
 using CarlosYulo.backend.monolith.common;
 using CarlosYulo.backend.monolith.employee;
+using CarlosYulo.backend.test;
 using CarlosYulo.database;
 
 namespace CarlosYulo;
@@ -13,35 +14,21 @@ public partial class Form1 : Form
     // Testing all concrete and service class
     //
     ClientService clientService;
-    IClientEmail email;
-    ClientSearch clientSearch;
-    SystemAccountSearch systemAccountSearch;
-    SystemAccountDelete systemAccountDelete;
-    SystemAccountCreate systemAccountCreate;
-    EmployeeService employeeService;
-
-    ClientService cl;
+    ClientCreateTest createTest;
+    
 
     // List of all client 
     private List<Client> clients;
 
 
-    public Form1(ClientService clientService, ClientEmail email, ClientSearch clientSearch,
-        SystemAccountSearch systemAccountSearch, SystemAccountDelete systemAccountDelete,
-        SystemAccountCreate systemAccountCreate, EmployeeService employeeService, ClientService cl)
+    public Form1(ClientService clientService, ClientCreateTest createTest)
     {
         InitializeComponent();
         this.Load += new EventHandler(Form1_Load);
         this.table1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.table1_CellClick);
 
         this.clientService = clientService;
-        this.email = email;
-        this.clientSearch = clientSearch;
-        this.systemAccountSearch = systemAccountSearch;
-        this.systemAccountDelete = systemAccountDelete;
-        this.systemAccountCreate = systemAccountCreate;
-        this.employeeService = employeeService;
-
+        this.createTest = createTest;
     }
 
     private void Form1_Load(object sender, EventArgs e)
@@ -126,18 +113,18 @@ public partial class Form1 : Form
 
     private void btnSearchFullName_Click(object sender, EventArgs e)
     {
-        Employee? employee = employeeService.SearchEmployeeByFullName(txtbxFullName.Text, null);
+        Client? client = clientService.SearchClientByFullName(txtbxFullName.Text, null);
         try
         {
-            if (employee != null)
+            if (client != null)
             {
-                lblName.Text = employee.EmployeeFullName;
-                lblMemberShipId.Text = employee.EmployeeId.ToString();
-                lblEmail.Text = employee.Email;
-                lblPhoneNumber.Text = employee.PhoneNumber;
-                lblGender.Text = employee.Gender;
-                lblAge.Text = employee.Age.ToString();
-                lblMemberShipStart.Text = employee.Birthday?.ToString("MM/dd/yyyy");
+                lblName.Text = client.FullName;
+                lblMemberShipId.Text = client.MembershipId.ToString();
+                lblEmail.Text = client.Email;
+                lblPhoneNumber.Text = client.PhoneNumber;
+                lblGender.Text = client.Gender;
+                lblAge.Text = client.Age.ToString();
+                lblMemberShipStart.Text = client.BirthDate?.ToString("MM/dd/yyyy");
                 // lblMembershipEnd.Text = Employee.MembershipEnd?.ToString("MM/dd/yyyy");
                 return;
             }
@@ -155,25 +142,14 @@ public partial class Form1 : Form
         // Client? client = clientService.SearchClientByFullName("John Doe", null);
         // List<Client> allClient = clientSearch.SearchAll();
 
-        Client newClient = new Client()
+        OpenFileDialog openFileDialog = new OpenFileDialog();
+        if (openFileDialog.ShowDialog() == DialogResult.OK)
         {
-            MembershipTypeId = 1,
-            FullName = "Akane Kurokawa",
-            Email = "akane.kurokawa@oshino.ko",
-            PhoneNumber = "08888888888",
-            Gender = "Female",
-            Age = 19,
-            BirthDate = new DateTime(2005, 8, 3)
-        };
-
-        clientService.CreateClient(newClient);
-
-
-        List<Client> clients = clientService.SearchAllMembersClient();
-        foreach (Client client in clients)
-        {
-            Console.WriteLine(newClient.ToString());
+            pictureBox1.Image = new Bitmap(openFileDialog.FileName);
         }
+
+        createTest.Test1();
+        Form1_Load( sender,  e);
     }
 
     private void txtbxFullName_TextChanged(object sender, EventArgs e)

@@ -6,7 +6,7 @@ namespace CarlosYulo.backend;
 public class Client
 {
     public int? MembershipId { get; set; }
-    public byte[]? ProfilePicture { get; set; }
+    public byte[]? ProfilePictureByte { get; set; }
     public Image? ProfilePictureImage { get; private set; }
     public string? FullName { get; set; }
     public int? MembershipTypeId { get; set; }
@@ -27,12 +27,12 @@ public class Client
         _imageViewer = new ImageViewer();
     }
 
-    public Client(int membershipId, byte[] profilePicture, string fullName, int membershipTypeId,
+    public Client(int membershipId, byte[] profilePictureByte, string fullName, int membershipTypeId,
         string email, string phoneNumber, string gender, int age, DateTime birthDate,
         DateTime membershipStart, DateTime membershipEnd, string membershipStatus)
     {
         MembershipId = membershipId;
-        ProfilePicture = profilePicture;
+        ProfilePictureByte = profilePictureByte;
         FullName = fullName;
         MembershipTypeId = membershipTypeId;
         Email = email;
@@ -60,7 +60,7 @@ public class Client
                $"Membership Status: {MembershipStatus}, " +
                $"Age: {Age}, " +
                $"Gender: {Gender}, " +
-               $"Profile Picture: {(ProfilePicture != null ? $"{ProfilePicture.Length} bytes" : "N/A")}";
+               $"Profile Picture: {(ProfilePictureByte != null ? $"{ProfilePictureByte.Length} bytes" : "N/A")}";
     }
 
     // Set string picture path into byte and save to ProfilePicture
@@ -73,7 +73,7 @@ public class Client
             if (_imageViewer.IsValidImageFormat(formattedProfilePicture))
             {
                 ProfilePictureImage = _imageViewer.ConvertByteArrayToImage(formattedProfilePicture);
-                ProfilePicture = formattedProfilePicture;
+                ProfilePictureByte = formattedProfilePicture;
             }
             else
             {
@@ -97,7 +97,6 @@ public class Client
     public void SetMembership(string membershipType)
     {
         Membership = membershipType;
-        
     }
 }
 

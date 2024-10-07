@@ -23,9 +23,9 @@ public class ClientDelete : IDelete<Client>
         return DeleteClientFunction("prcClientDeleteByMembershipId", membershipId, null);
     }
 
-    public bool DeleteAllExpired()
+    public bool DeleteAllWalkInExpired()
     {
-        return DeleteClientFunction("prcClientDeleteAllExpired", null, null);
+        return DeleteClientFunction("prcClientDeleteAllExpiredWalkIn", null, null);
     }
 
 

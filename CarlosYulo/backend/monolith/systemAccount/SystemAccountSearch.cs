@@ -30,6 +30,11 @@ public class SystemAccountSearch : ISearch<SystemAccount, SystemAccountType?>, I
         return Search(null, fullName, null, systemAccountType, out message);
     }
 
+    public List<SystemAccount> SearchAll(string userType)
+    {
+        return null;
+    }
+
 
     private SystemAccount? Search(int? id, string? fullName, string? email, SystemAccountType? systemAccountType, out string message)
     {

@@ -21,17 +21,17 @@ public class ClientService
         IClientUpdate iClientUpdate,
         IClientEmail clientEmail)
     {
-        this.ClientCreate = clientCreate;
-        this.ClientUpdate = clientUpdate;
-        this.ClientDelete = clientDelete;
-        this.ClientSearch = clientSearch;
-        this.IClientCreate = iClientCreate;
-        this.IClientUpdate = iClientUpdate;
-        this.ClientEmail = clientEmail;
+        ClientCreate = clientCreate;
+        ClientUpdate = clientUpdate;
+        ClientDelete = clientDelete;
+        ClientSearch = clientSearch;
+        IClientCreate = iClientCreate;
+        IClientUpdate = iClientUpdate;
+        ClientEmail = clientEmail;
     }
 
     // CREATE FUNCTION ///////////////////////////////////
-    public bool CreateClient(Client client) 
+    public bool CreateClient(Client client)
     {
         if (client.MembershipTypeId == 3 || client.MembershipTypeId == 4)
         {
@@ -39,7 +39,7 @@ public class ClientService
                 MessageBoxIcon.Error);
             return false;
         }
-        
+
         string message;
         bool result = ClientCreate.Create(client, out message);
 
@@ -75,6 +75,7 @@ public class ClientService
         {
             MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+
         return result;
     }
 
@@ -85,13 +86,42 @@ public class ClientService
         return ClientUpdate.Update(client);
     }
 
-    public bool UpdateClientProfilePicture(Client client, string picture)
+    public void UpdateClientProfilePicture(Client client, string picture)
     {
-        return ClientUpdate.UpdateProfilePicture(client, picture);
+        if (client is null)
+        {
+            MessageBox.Show("Client is null", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+
+        try
+        {
+            string message;
+            bool result = ClientUpdate.UpdateProfilePicture(client, picture, out message);
+            if (!result)
+            {
+                MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            MessageBox.Show("An unexpected error occurred: " + e.Message, "Exception Error", MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+        }
     }
 
     public bool UpdateClientMembershipType(Client client, MembershipType membershipType)
     {
+        if (client is null)
+        {
+            MessageBox.Show("Client is null", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
+        }
+        
         return IClientUpdate.UpdateClientMembershipType(client, membershipType);
     }
 
@@ -110,6 +140,7 @@ public class ClientService
                 MessageBoxIcon.Error);
             return false;
         }
+
         return ClientDelete.DeleteById(membershipId);
     }
 
@@ -130,7 +161,7 @@ public class ClientService
                 MessageBoxIcon.Error);
             return null;
         }
-        
+
         string message;
         Client? client = ClientSearch.SearchById(membershipId, gender, out message);
 
@@ -139,6 +170,7 @@ public class ClientService
             MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return null;
         }
+
         return client;
     }
 
@@ -159,11 +191,31 @@ public class ClientService
             MessageBox.Show(message, "Error search", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return null;
         }
+
         return client;
     }
 
     public List<Client> SearchAllMembersClient()
     {
-        return ClientSearch.SearchAll();
+        string type = "Membership";
+        return ClientSearch.SearchAll(type);
+    }
+
+    public List<Client> SearchAllWalkInClient()
+    {
+        string type = "Walk-in";
+        return ClientSearch.SearchAll(type);
+    }
+
+    public List<Client> SearchAllClient()
+    {
+        string type = "";
+        return ClientSearch.SearchAll(type);
+    }
+
+    // EMAIL 
+    public void SendEmailVerificationExpire(Client client)
+    {
+        ClientEmail.SendMembershipExpiryEmail(client);
     }
 }

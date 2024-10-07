@@ -23,7 +23,7 @@ public class EmployeeSearch : ISearch<Employee, int?>
         return SearchEmployee("prcEmployeeSearchByName", null, fullName, employeeTypeId, out message);
     }
 
-    public List<Employee> SearchAll()
+    public List<Employee> SearchAll(string wala)
     {
         return new List<Employee>();
     }

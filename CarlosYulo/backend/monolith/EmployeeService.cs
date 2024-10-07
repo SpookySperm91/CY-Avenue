@@ -58,6 +58,7 @@ public class EmployeeService
 
     public List<Employee> SearchAllEmployee()
     {
-        return employeeSearch.SearchAll();
+        string type = "";
+        return employeeSearch.SearchAll(type);
     }
 }

@@ -38,17 +38,31 @@ public class ClientSearch : ISearch<Client, string>, IClientSearch
     }
 
 
-    public List<Client> SearchAll()
+    public List<Client> SearchAll(String type)
     {
         List<Client> clients = new List<Client>();
+        string storedProcedure;
 
+        if (type.Equals("Membership", StringComparison.OrdinalIgnoreCase))
+        {
+            storedProcedure = "prcClientSearchAllByMembership";
+        }
+        else if (type.Equals("Walk-in", StringComparison.OrdinalIgnoreCase))
+        {
+            storedProcedure = "prcClientSearchAllByWalkIn";
+        }
+        else
+        {
+            storedProcedure = "prcClientSearchAll";
+        }
+        
         try
         {
             using (var connection = dbConnector.CreateConnection())
             {
                 connection.Open();
 
-                using (var command = new MySqlCommand("prcClientSearchAllByMembership", connection))
+                using (var command = new MySqlCommand(storedProcedure, connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
 
@@ -56,7 +70,7 @@ public class ClientSearch : ISearch<Client, string>, IClientSearch
                     {
                         while (reader.Read())
                         {
-                            Client client = new Client
+                            Client client = new Client()
                             {
                                 FullName = reader["full_name"] is DBNull ? null : reader["full_name"].ToString(),
                                 MembershipId = reader["membership_id"] is DBNull
@@ -70,11 +84,8 @@ public class ClientSearch : ISearch<Client, string>, IClientSearch
                                     ? null
                                     : reader["phone_number"].ToString(),
 
-                                BirthDate =
-                                    reader["birthday"] is DBNull ? null : Convert.ToDateTime(reader["birthday"]),
                                 Age = reader["age"] is DBNull ? 0 : Convert.ToInt32(reader["age"]),
-                                Gender = reader["gender"] is DBNull ? null : reader["gender"].ToString(),
-                                ProfilePicture = reader["profile_pic"] is DBNull ? null : (byte[])reader["profile_pic"],
+
                                 MembershipStart = reader["membership_start"] is DBNull
                                     ? null
                                     : Convert.ToDateTime(reader["membership_start"]),
@@ -83,8 +94,25 @@ public class ClientSearch : ISearch<Client, string>, IClientSearch
                                     : Convert.ToDateTime(reader["membership_end"]),
                                 MembershipStatus = reader["membership_status"] is DBNull
                                     ? null
-                                    : reader["membership_status"].ToString()
+                                    : reader["membership_status"].ToString(),
                             };
+
+                            if (type.Equals("Walk-in"))
+                            {
+                                client.BirthDate = null;
+                                client.ProfilePictureByte = null;
+                                client.Gender = null;
+                            }
+                            else
+                            {
+                                client.BirthDate =
+                                    reader["birthday"] is DBNull ? null : Convert.ToDateTime(reader["birthday"]);
+                                client.ProfilePictureByte = reader["profile_pic"] is DBNull
+                                    ? null
+                                    : (byte[])reader["profile_pic"];
+                                client.Gender = reader["gender"] is DBNull ? null : reader["gender"].ToString();
+                            }
+
                             client.SetMembership(
                                 reader["membership"] is DBNull ? null : reader["membership"].ToString());
 
@@ -98,7 +126,6 @@ public class ClientSearch : ISearch<Client, string>, IClientSearch
         {
             Console.WriteLine("An error occurred: " + ex.Message);
         }
-
         return clients;
     }
 
@@ -151,7 +178,7 @@ public class ClientSearch : ISearch<Client, string>, IClientSearch
                             {
                                 client.Age = Convert.ToInt32(reader["age"]);
                                 client.Gender = reader["gender"].ToString();
-                                client.ProfilePicture = reader["profile_pic"] is DBNull
+                                client.ProfilePictureByte = reader["profile_pic"] is DBNull
                                     ? null
                                     : (byte[])reader["profile_pic"];
                             }

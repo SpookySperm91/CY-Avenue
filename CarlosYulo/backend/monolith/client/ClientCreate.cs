@@ -10,25 +10,26 @@ namespace CarlosYulo.backend.monolith
         private DatabaseConnector dbConnector;
         private ImageViewer imageViewer;
 
-        public ClientCreate(DatabaseConnector dbConnector, ImageViewer imageViewer)
+        public ClientCreate(DatabaseConnector dbConnector)
         {
             this.dbConnector = dbConnector;
-            this.imageViewer = imageViewer;
+            this.imageViewer = new ImageViewer();
         }
 
-
+        // create new walk-in client
         public bool CreateWalkIn(Client client, out string message)
         {
             return CreateClient(client, "Walk-in", out message);
         }
 
-
+        // create new member client
         public bool Create(Client client, out string message)
         {
             return CreateClient(client, "Membership", out message);
         }
 
-
+        
+        // base class for creating
         private bool CreateClient(Client client, string type, out string message)
         {
             List<string> missingFields = new List<string>();
@@ -61,7 +62,7 @@ namespace CarlosYulo.backend.monolith
 
                         if (type.Equals("Walk-in"))
                         {
-                            expireTime = DateTime.Today;
+                            expireTime = DateTime.Today.AddHours(12);
                         }
                         else if (type.Equals("Membership"))
                         {
@@ -78,8 +79,7 @@ namespace CarlosYulo.backend.monolith
                         outputIdParam.Direction = System.Data.ParameterDirection.Output;
                         command.Parameters.Add(outputIdParam);
 
-                        MySqlParameter outputMembershipParam =
-                            new MySqlParameter("p_membership", MySqlDbType.VarChar, 55);
+                        MySqlParameter outputMembershipParam = new MySqlParameter("p_membership", MySqlDbType.VarChar, 55);
                         outputMembershipParam.Direction = System.Data.ParameterDirection.Output;
                         command.Parameters.Add(outputMembershipParam);
 
@@ -98,7 +98,7 @@ namespace CarlosYulo.backend.monolith
                         {
                             command.Parameters.AddWithValue("p_age", client.Age);
                             command.Parameters.AddWithValue("p_birthday", client.BirthDate);
-                            command.Parameters.AddWithValue("p_profile_pic", client.ProfilePicture);
+                            command.Parameters.AddWithValue("p_profile_pic", client.ProfilePictureByte);
                         }
                         else if (type.Equals("Walk-in"))
                         {
@@ -179,8 +179,8 @@ namespace CarlosYulo.backend.monolith
                 missingFields.Add("Birth Date");
             }
 
-            if (client.ProfilePicture != null && client.ProfilePicture.Length > 0 &&
-                !imageViewer.IsValidImageFormat(client.ProfilePicture))
+            if (client.ProfilePictureByte != null && client.ProfilePictureByte.Length > 0 &&
+                !imageViewer.IsValidImageFormat(client.ProfilePictureByte))
             {
                 missingFields.Add("Profile Picture (must be a valid PNG or JPEG)");
             }

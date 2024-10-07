@@ -2,6 +2,7 @@ using CarlosYulo.backend;
 using CarlosYulo.backend.monolith;
 using CarlosYulo.backend.monolith.common;
 using CarlosYulo.backend.monolith.employee;
+using CarlosYulo.backend.test;
 using CarlosYulo.database;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -83,6 +84,10 @@ namespace CarlosYulo
             services.AddScoped<SystemAccountDelete>();
             services.AddScoped<SystemAccountCreate>();
             services.AddScoped<ImageViewer>();
+            
+            // Test Classes
+            services.AddScoped<ClientCreateTest>();
+            
             
             // Register EmailSendBase to its concrete class
             services.AddScoped<EmailSendBase, ClientEmail>();

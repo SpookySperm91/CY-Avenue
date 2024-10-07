@@ -12,13 +12,13 @@ public interface ISearch<T, TVar>
 {
     T? SearchById(int id, TVar? variable, out string message);
     T? SearchByFullName(string fullName, TVar? variable, out string message);
-    List<T> SearchAll();
+    List<T> SearchAll(string type);
 }
 
 public interface IUpdate<T>
 {
     bool Update(T entity);
-    bool UpdateProfilePicture(T entity, string picture);
+    bool UpdateProfilePicture(T entity, string picture, out string message);
 }
 
 public interface IDelete<T>
