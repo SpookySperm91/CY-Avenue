@@ -5,7 +5,7 @@ public class SystemVerification
     public int? UserId { get; set; }
     public string? UserName { get; set; }
     public string? Body { get; set; } // i.e verification, etc...
-    public SystemAccountType? SystemAccountType { get; set; }
+    public string? SystemAccountType { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime ExpireAt { get; set; }
     public bool Status { get; set; }

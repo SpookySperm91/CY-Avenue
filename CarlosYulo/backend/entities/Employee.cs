@@ -4,16 +4,21 @@ namespace CarlosYulo.backend;
 
 public class Employee
 {
-    public int? EmployeeId { get; set; }
-    public string? EmployeeFullName { get; set; }
+    public string? FullName { get; set; }
     public int? EmployeeTypeId { get; set; }
     public double? Salary { get; set; }
     public string? Email { get; set; }
     public string? PhoneNumber { get; set; }
     public string? Gender { get; set; }
     public int? Age { get; set; }
-    public DateTime? Birthday { get; set; }
-    public byte[] ProfilePicture { get; set; }
+    public DateTime? BirthDate { get; set; }
+
+
+    // Non mutable on surface level
+    public int? EmployeeId { get; set; }
+    public string EmployeeType { get; private set; }
+    public byte[]? ProfilePictureByte { get; set; }
+    public Image? ProfilePictureImage { get; private set; }
 
     private ImageViewer _imageViewer;
 
@@ -22,24 +27,24 @@ public class Employee
         _imageViewer = new ImageViewer();
     }
 
-    public Employee(int employeeId, string employeeFullName, int employeeTypeId, double salary, string email,
-        string phoneNumber, string gender, int age, DateTime birthday, byte[] profilePicture)
+    public override string ToString()
     {
-        EmployeeId = employeeId;
-        EmployeeFullName = employeeFullName;
-        EmployeeTypeId = employeeTypeId;
-        Salary = salary;
-        Email = email;
-        PhoneNumber = phoneNumber;
-        Gender = gender;
-        Age = age;
-        Birthday = birthday;
-        ProfilePicture = profilePicture;
-        _imageViewer = new ImageViewer();
+        return $"Employee ID: {EmployeeId}, " +
+               $"Full Name: {FullName}, " +
+               $"Employee Type ID: {EmployeeTypeId}, " +
+               $"Employee Type: {EmployeeType}, " +
+               $"Salary: {Salary}, " + // Formats as currency
+               $"Email: {Email}, " +
+               $"Phone Number: {PhoneNumber}, " +
+               $"Gender: {Gender}, " +
+               $"Age: {Age}, " +
+               $"Birth Date: {BirthDate?.ToString("MMMM dd, yyyy") ?? "N/A"}, " +
+               $"Profile Picture Byte: {(ProfilePictureByte != null ? $"{ProfilePictureByte.Length} bytes" : "N/A")}, " +
+               $"Profile Picture: {(ProfilePictureImage != null ? "Image Set" : "N/A")}";
     }
 
 
-    public void SetProfilePictureToByte(string profilePicturePath)
+    public bool SetProfilePicture(string profilePicturePath, out string message)
     {
         try
         {
@@ -47,7 +52,42 @@ public class Employee
 
             if (_imageViewer.IsValidImageFormat(formattedProfilePicture))
             {
-                ProfilePicture = formattedProfilePicture;
+                ProfilePictureImage = _imageViewer.ConvertByteArrayToImage(formattedProfilePicture); // Image 
+                ProfilePictureByte = formattedProfilePicture; // byte[] 
+                message = "Profile Picture Set";
+                return true;
+            }
+
+            message = "Profile picture could not be loaded. Invalid image format. Only PNG and JPEG are supported.";
+            return false;
+        }
+        catch (FileNotFoundException ex)
+        {
+            message = ex.Message;
+            return false;
+        }
+        catch (InvalidDataException ex)
+        {
+            message = ex.Message;
+            return false;
+        }
+        catch (Exception ex)
+        {
+            message = ex.Message;
+            return false;
+        }
+    }
+
+    public void SetProfilePicture(string profilePicturePath)
+    {
+        try
+        {
+            byte[] formattedProfilePicture = _imageViewer.LoadProfilePicture(profilePicturePath);
+
+            if (_imageViewer.IsValidImageFormat(formattedProfilePicture))
+            {
+                ProfilePictureImage = _imageViewer.ConvertByteArrayToImage(formattedProfilePicture); // image 
+                ProfilePictureByte = formattedProfilePicture;
             }
             else
             {
@@ -67,12 +107,17 @@ public class Employee
             Console.WriteLine($"An unexpected error occurred: {ex.Message}");
         }
     }
+
+    public void SetProfilePictureImage(Image? profilePictureImage)
+    {
+        ProfilePictureImage = profilePictureImage;
+    }
+
+    public void SetEmployeeType(string employeeType)
+    {
+        EmployeeType = employeeType;
+    }
 }
 
-public enum EmployeeRole
-{
-    STAFF,
-    SUPERVISOR,
-    TRAINER,
-    MANAGER
-}
+
+

@@ -27,4 +27,12 @@
         </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="backend\monolith\revenue\" />
+      <Folder Include="backend\monolith\session\ss_delete\" />
+      <Folder Include="backend\monolith\session\ss_search\" />
+      <Folder Include="backend\monolith\session\ss_update\" />
+      <Folder Include="backend\monolith\shop\" />
+    </ItemGroup>
+
 </Project>

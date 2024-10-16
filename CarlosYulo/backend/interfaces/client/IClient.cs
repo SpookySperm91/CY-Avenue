@@ -2,6 +2,17 @@
 
 public class IClient {}
 
+public interface IClientSearchChild: ISearchById<Client, string>, ISearchByFullName<Client, string>,ISearchAll<Client, string?> 
+{
+    
+}
+
+
+
+
+
+
+
 public interface IClientCreate
 {
     bool CreateWalkIn(Client client, out string message);
@@ -9,14 +20,17 @@ public interface IClientCreate
 
 public interface IClientSearch
 {
-    Client? SearchWalkInByFullName(string fullName, out string message);
+    List<Client?> SearchWalkInByFullName(string fullName, out string message);
     Client? SearchWalkInByMembershipId(int membershipId, out string message);
 }
 
 
 public interface IClientUpdate
 {
-    bool UpdateClientMembershipType(Client client, MembershipType membership, out string message);
+    bool UpdateClientMembershipType(Client client, MembershipType membershipType, out string message);
+    
+    // void UpdateClientMembershipType(Client client, MembershipType membership, out string message);
+
 }
 
 public interface IClientGenerate

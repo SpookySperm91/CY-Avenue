@@ -6,12 +6,14 @@ public class Interface
 
 public interface ICreate<T>
 {
-    bool Create(T entity, out string message);
+    bool Create(T systemAccount, out string message);
 }
+
 public interface ISearch<T, TVar>
 {
     T? SearchById(int id, TVar? variable, out string message);
-    T? SearchByFullName(string fullName, TVar? variable, out string message);
+    //T? SearchByFullName(string fullName, TVar? variable, out string message);
+    List<T?> SearchByFullName(string fullName, TVar? variable, out string message);
     List<T> SearchAll(string type);
 }
 
@@ -23,8 +25,8 @@ public interface IUpdate<T>
 
 public interface IDelete<T>
 {
-    bool Delete(T entity);
-    bool DeleteById(int? id);
+    bool Delete(T entity, out string message);
+    bool DeleteById(int userId, out string message);
 }
 
 public interface IAttendance<T>

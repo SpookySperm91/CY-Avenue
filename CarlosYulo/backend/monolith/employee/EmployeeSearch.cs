@@ -18,9 +18,9 @@ public class EmployeeSearch : ISearch<Employee, int?>
         return SearchEmployee("prcEmployeeSearchByEmployeeId", id, null, employeeTypeId, out message);
     }
 
-    public Employee? SearchByFullName(string fullName, int? employeeTypeId, out string message)
+    public List<Employee?> SearchByFullName(string fullName, int? employeeTypeId, out string message)
     {
-        return SearchEmployee("prcEmployeeSearchByName", null, fullName, employeeTypeId, out message);
+        return SearchEmployees("prcEmployeeSearchByName", null, fullName, employeeTypeId, out message);
     }
 
     public List<Employee> SearchAll(string wala)
@@ -28,6 +28,14 @@ public class EmployeeSearch : ISearch<Employee, int?>
         return new List<Employee>();
     }
 
+    private List<Employee?> SearchEmployees(string storedProcedure, int? employeeId, string? fullName,
+        int? employeeTypeId,
+        out string message)
+    {
+        message = string.Empty;
+        return null;
+    }
+    
     private Employee? SearchEmployee(string storedProcedure, int? employeeId, string? fullName, int? employeeTypeId,
         out string message)
     {
@@ -65,13 +73,20 @@ public class EmployeeSearch : ISearch<Employee, int?>
                         {
                             employee = new Employee
                             {
-                                EmployeeFullName = reader["full_name"] is DBNull ? null : reader["full_name"].ToString(),
-                                EmployeeId = reader["employee_id"] is DBNull ? null : Convert.ToInt32(reader["employee_id"]),
+                                FullName =
+                                    reader["full_name"] is DBNull ? null : reader["full_name"].ToString(),
+                                EmployeeId = reader["employee_id"] is DBNull
+                                    ? null
+                                    : Convert.ToInt32(reader["employee_id"]),
                                 Email = reader["email"] is DBNull ? null : reader["email"].ToString(),
-                                PhoneNumber = reader["phone_number"] is DBNull ? null : reader["phone_number"].ToString(),
+                                PhoneNumber = reader["phone_number"] is DBNull
+                                    ? null
+                                    : reader["phone_number"].ToString(),
                                 Age = reader["age"] is DBNull ? null : Convert.ToInt32(reader["age"]),
                                 Gender = reader["gender"] is DBNull ? null : reader["gender"].ToString(),
-                                ProfilePicture = reader["profile_pic"] is DBNull ? null : (byte[])reader["profile_pic"]
+                                ProfilePictureByte = reader["profile_pic"] is DBNull
+                                    ? null
+                                    : (byte[])reader["profile_pic"]
                             };
                         }
                     }

@@ -232,3 +232,5 @@ C:\Users\Jhon Andrie\RiderProjects\CarlosYulo\CarlosYulo\bin\Debug\net8.0-window
 C:\Users\Jhon Andrie\RiderProjects\CarlosYulo\CarlosYulo\bin\Debug\net8.0-windows\zh-Hans\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
 C:\Users\Jhon Andrie\RiderProjects\CarlosYulo\CarlosYulo\bin\Debug\net8.0-windows\zh-Hant\Microsoft.TestPlatform.CoreUtilities.resources.dll
 C:\Users\Jhon Andrie\RiderProjects\CarlosYulo\CarlosYulo\bin\Debug\net8.0-windows\zh-Hant\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+C:\Users\Jhon Andrie\RiderProjects\CarlosYulo\CarlosYulo\bin\Debug\net8.0-windows\template\EmailWelcomeNewMember.html
+C:\Users\Jhon Andrie\RiderProjects\CarlosYulo\CarlosYulo\bin\Debug\net8.0-windows\template\EmailRenewedMembership.html

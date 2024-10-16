@@ -7,7 +7,7 @@ public class SystemAccount
     public string? Email { get; set; }
     public string? Password { get; set; }
     public string? PasswordSalt { get; set; }
-    public SystemAccountType AccountType { get; set; }
+    public string AccessType { get; set; }
     public bool Logged { get; set; }
     public bool Locked { get; set; }
     public bool? AllowDelete { get; set; }
@@ -19,7 +19,7 @@ public class SystemAccount
         return $"User ID: {UserId?.ToString() ?? "N/A"}, " +
                $"User Name: {UserName ?? "N/A"}, " +
                $"Email: {Email ?? "N/A"}, " +
-               $"Account Type: {AccountType}, " +
+               $"Account Type: {AccessType}, " +
                $"Logged: {Logged}, " +
                $"Locked: {Locked}, " +
                $"AllowDelete: {AllowDelete}";
