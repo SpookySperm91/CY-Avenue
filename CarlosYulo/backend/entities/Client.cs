@@ -119,7 +119,6 @@ public class Client
         }
     }
 
-
     public void SetProfilePictureImage(Image? profilePictureImage)
     {
         ProfilePictureImage = profilePictureImage;

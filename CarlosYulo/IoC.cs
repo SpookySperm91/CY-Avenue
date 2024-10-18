@@ -10,6 +10,9 @@ using CarlosYulo.backend.monolith.employee.delete;
 using CarlosYulo.backend.monolith.employee.salary;
 using CarlosYulo.backend.monolith.employee.search;
 using CarlosYulo.backend.monolith.employee.update;
+using CarlosYulo.backend.monolith.revenue.i_liability;
+using CarlosYulo.backend.monolith.shop;
+using CarlosYulo.backend.monolith.shop.i_revenue;
 using CarlosYulo.backend.monolith.systemAccount.sy_login;
 using CarlosYulo.database;
 using Microsoft.Extensions.DependencyInjection;
@@ -83,6 +86,8 @@ namespace CarlosYulo
 
             services.AddScoped<ClientCreateMember>();
             services.AddScoped<ClientCreateWalkIn>();
+            services.AddScoped<ClientEmailExpire>();
+
 
             // service class
         }
@@ -134,6 +139,22 @@ namespace CarlosYulo
             services.AddScoped<SystemAccountEmail>();
             services.AddScoped<SystemAccountCompareVerification>();
             services.AddScoped<SystemAccountVerificationDelete>();
+            
+            // ITEM
+            services.AddScoped<ItemCreate>();
+            services.AddScoped<ItemUpdateDetails>();
+            services.AddScoped<ItemSearchById>();
+            services.AddScoped<ItemSearchByCategory>();
+            services.AddScoped<ItemSearchAll>();
+            services.AddScoped<ItemRestockQuantity>();
+            services.AddScoped<ItemBuy>();
+            
+            // REVENUE
+            services.AddScoped<ItemRevenueGenerate>();
+            services.AddScoped<MembershipRevenueGenerate>();
+            services.AddScoped<RevenueGenerateMonthlyReport>();
+            services.AddScoped<LiabilityEmployeeSalary>();
+            services.AddScoped<LiabilityItemRestock>();
         }
     }
 }

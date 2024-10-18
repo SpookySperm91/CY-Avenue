@@ -99,6 +99,9 @@ public class ClientCreateMember
     {
         DateTime expireTime = DateTime.Now.AddDays(30);
         string membershipStatus = "Active";
+        
+        client.MembershipStart = DateTime.Now;
+        client.MembershipEnd = expireTime;
 
 
         command.Parameters.AddWithValue("p_full_name", client.FullName?.TrimEnd());

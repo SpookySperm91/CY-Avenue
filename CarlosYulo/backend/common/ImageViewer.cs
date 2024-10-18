@@ -65,21 +65,27 @@ public class ImageViewer
             return false;
         }
 
-        byte[] jpegMagicNumber = { 0xFF, 0xD8, 0xFF };
+        // JPEG Magic Number (SOI marker)
+        byte[] jpegMagicNumber = { 0xFF, 0xD8 };
+        // PNG Magic Number
         byte[] pngMagicNumber = { 0x89, 0x50, 0x4E, 0x47 };
+   
 
+        // Check if it's a valid JPEG
         if (profilePicture.Length >= jpegMagicNumber.Length &&
             profilePicture.Take(jpegMagicNumber.Length).SequenceEqual(jpegMagicNumber))
         {
             return true; // Valid JPEG
         }
 
+        // Check if it's a valid PNG
         if (profilePicture.Length >= pngMagicNumber.Length &&
             profilePicture.Take(pngMagicNumber.Length).SequenceEqual(pngMagicNumber))
         {
             return true; // Valid PNG
         }
 
-        return false; // Not a valid PNG or JPEG
+        return false; // Not a valid JPEG, PNG, or GIF
     }
+
 }
