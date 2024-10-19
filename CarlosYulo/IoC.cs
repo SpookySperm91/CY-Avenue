@@ -38,135 +38,40 @@ namespace CarlosYulo
             // Database
             services.AddScoped<DatabaseConnection>(provider =>
                 new DatabaseConnection("localhost", "cy", "root", "123456", "3306"));
-
-            services.AddScoped<DatabaseConnector>(provider =>
-                new DatabaseConnector("localhost", "cy", "root", "123456", "3306"));
-
-            ClientServiceDependancies(services);
-            EmployeeServiceDependancies(services);
-            SystemAccountServiceDependancies(services);
-            CommonClassDependancies(services);
-
-            // Controller
-            ClientController(services);
-            EmployeeController(services);
-            SystemAccountController(services);
-            ItemController(services);
-            RevenueController(services);
             
+            // Common
+            CommonClassDependencies(services);
+            
+            // Controller / Services
+            ClientController(services);
+            ClientConcreteDependencies(services);
+
+            EmployeeController(services);
+            EmployeeConcreteDependencies(services);
+
+            SystemAccountController(services);
+            SystemAccountConcreteDependencies(services);
+
+            ItemController(services);
+            ItemConcreteDependencies(services);
+
+            RevenueController(services);
+            RevenueConcreteDependencies(services);
+
             // Form 1
             services.AddScoped<Form1>();
         }
 
-        private static void ClientServiceDependancies(IServiceCollection services)
+
+        
+        // // // // // // // // // //
+        private static void CommonClassDependencies(IServiceCollection services)
         {
-            // Client Concrete Classes
-            services.AddScoped<ICreate<Client>, ClientCreate>();
-            services.AddScoped<IUpdate<Client>, ClientUpdate>();
-            services.AddScoped<ISearch<Client, string>, ClientSearch>();
-            services.AddScoped<ClientCreate>();
-            services.AddScoped<ClientUpdate>();
-            services.AddScoped<ClientSearch>();
-            services.AddScoped<ClientSearchByName>();
-            services.AddScoped<ClientSearchById>();
-            services.AddScoped<ClientSearchAll>();
-            services.AddScoped<ClientUpdateDetails>();
-            services.AddScoped<IClientCreate, ClientCreate>();
-            services.AddScoped<IClientEmail, ClientEmailExpire>();
-
-            // Experimental
-            services.AddScoped<ISearchByFullName<Client, string>, ClientSearchByName>();
-            services.AddScoped<ISearchById<Client, string>, ClientSearchById>();
-            services.AddScoped<ISearchAll<Client, string?>, ClientSearchAll>();
-
-            services.AddScoped<IClientUpdate, ClientUpdateMembership>();
-            services.AddScoped<ClientUpdateMembership>();
-            services.AddScoped<IUpdateProfilePicture<bool, Client>, ClientUpdateProfilePicture>();
-            services.AddScoped<ClientUpdateProfilePicture>();
-            services.AddScoped<IClientSearchChild, ClientSearchService>();
-            services.AddScoped<ClientSearchService>();
-
-            services.AddScoped<IDeleteByEntity<Client>, ClientDelete>();
-            services.AddScoped<IDeleteById, ClientDelete>();
-            services.AddScoped<ClientDelete>();
-            services.AddScoped<ClientDeleteAllExpired>();
-            services.AddScoped<ClientUpdateStatus>();
-
-
-            services.AddScoped<ClientEmailWelcome>();
-            services.AddScoped<ClientEmailRenewed>();
-
-            services.AddScoped<ClientCreateMember>();
-            services.AddScoped<ClientCreateWalkIn>();
-            services.AddScoped<ClientEmailExpire>();
-
-
-            // service class
-        }
-
-        private static void EmployeeServiceDependancies(IServiceCollection services)
-        {
-
-            // service class
-            services.AddScoped<EmployeeCreateNew>();
-            services.AddScoped<EmployeeUpdateDetails>();
-            services.AddScoped<EmployeeUpdateProfilePicture>();
-
-            services.AddScoped<EmployeeSearchAll>();
-            services.AddScoped<EmployeeSearchById>();
-            services.AddScoped<EmployeeSearchByName>();
-            services.AddScoped<EmployeeDelete>();
-            services.AddScoped<EmployeeSalaryUpdate>();
-            services.AddScoped<EmployeeAttendanceCreate>();
-            services.AddScoped<EmployeeAttendanceSearchAll>();
-            services.AddScoped<EmployeeAttendanceSearchDaily>();
-            services.AddScoped<EmployeeAttendanceSearchMonthly>();
-        }
-
-        private static void SystemAccountServiceDependancies(IServiceCollection services)
-        {
-            // SystemAccount Concrete Classes
-            services.AddScoped<IDelete<SystemAccount>, SystemAccountDelete>();
-            services.AddScoped<ICreate<SystemAccount>, SystemAccountCreate>();
-            services.AddScoped<SystemAccountSearchById>();
-            services.AddScoped<SystemAccountSearchByEmail>();
-            services.AddScoped<SystemAccountSearchAll>();
-            services.AddScoped<SystemAccountCheckAccount>();
-            services.AddScoped<SystemAccountUpdatePassword>();
-            services.AddScoped<SystemAccountUpdateDetails>();
-            services.AddScoped<SystemAccountVerification>();
-        }
-
-        private static void CommonClassDependancies(IServiceCollection services)
-        {
-            // Concrete Classes
-            services.AddScoped<ClientSearch>();
-            services.AddScoped<PasswordHashing>();
-            services.AddScoped<SystemAccountSearch>();
-            services.AddScoped<SystemAccountDelete>();
-            services.AddScoped<SystemAccountCreate>();
+            // common
+            services.AddScoped<EmailSendBase>();
+            services.AddScoped<ErrorMessageBox>();
             services.AddScoped<ImageViewer>();
-            services.AddScoped<SystemAccountEmail>();
-            services.AddScoped<SystemAccountCompareVerification>();
-            services.AddScoped<SystemAccountVerificationDelete>();
-            
-            // ITEM
-            services.AddScoped<ItemCreate>();
-            services.AddScoped<ItemUpdateDetails>();
-            services.AddScoped<ItemSearchById>();
-            services.AddScoped<ItemSearchByCategory>();
-            services.AddScoped<ItemSearchAll>();
-            services.AddScoped<ItemRestockQuantity>();
-            services.AddScoped<ItemBuy>();
-            
-            // REVENUE
-            services.AddScoped<RevenueGenerateItemSaleReport>();
-            services.AddScoped<RevenueGenerateMembershipSalesReport>();
-            services.AddScoped<RevenueGeneratePartialReport>();
-            services.AddScoped<LiabilityEmployeeSalary>();
-            services.AddScoped<LiabilityItemRestock>();
-            services.AddScoped<LiabilityTotalMonth>();
-            services.AddScoped<RevenueGenerateFinalReport>();
+            services.AddScoped<PasswordHashing>();
         }
 
         private static void ClientController(IServiceCollection services)
@@ -177,11 +82,34 @@ namespace CarlosYulo
             services.AddScoped<ClientSearchServices>();
             services.AddScoped<ClientDeleteServices>();
             services.AddScoped<ClientEmailService>();
-            
+
             // controller
             services.AddScoped<ClientController>();
         }
-        
+
+        private static void ClientConcreteDependencies(IServiceCollection services)
+        {
+            // create
+            services.AddScoped<ClientCreateMember>();
+            services.AddScoped<ClientCreateWalkIn>();
+            // update
+            services.AddScoped<ClientUpdateDetails>();
+            services.AddScoped<ClientUpdateMembership>();
+            services.AddScoped<ClientUpdateProfilePicture>();
+            services.AddScoped<ClientUpdateStatus>();
+            // search
+            services.AddScoped<ClientSearchAll>();
+            services.AddScoped<ClientSearchById>();
+            services.AddScoped<ClientSearchByName>();
+            // delete
+            services.AddScoped<ClientDelete>();
+            services.AddScoped<ClientDeleteAllExpired>();
+            // email
+            services.AddScoped<ClientEmailWelcome>();
+            services.AddScoped<ClientEmailExpire>();
+            services.AddScoped<ClientEmailRenewed>();
+        }
+
         private static void EmployeeController(IServiceCollection services)
         {
             // services
@@ -189,21 +117,57 @@ namespace CarlosYulo
             services.AddScoped<EmployeeAttendanceServices>();
             services.AddScoped<EmployeeSearchServices>();
             services.AddScoped<EmployeeUpdateServices>();
-            
+
             // controller
             services.AddScoped<EmployeeController>();
         }
-        
-        
+
+        private static void EmployeeConcreteDependencies(IServiceCollection services)
+        {
+            // others
+            services.AddScoped<EmployeeCreateNew>();
+            services.AddScoped<EmployeeDelete>();
+            services.AddScoped<EmployeeSalaryUpdate>();
+            // attendance
+            services.AddScoped<EmployeeAttendanceCreate>();
+            services.AddScoped<EmployeeAttendanceSearchAll>();
+            services.AddScoped<EmployeeAttendanceSearchDaily>();
+            services.AddScoped<EmployeeAttendanceSearchMonthly>();
+            // search
+            services.AddScoped<EmployeeSearchAll>();
+            services.AddScoped<EmployeeSearchById>();
+            services.AddScoped<EmployeeSearchByName>();
+            // update
+            services.AddScoped<EmployeeUpdateDetails>();
+            services.AddScoped<EmployeeUpdateProfilePicture>();
+        }
+
         private static void SystemAccountController(IServiceCollection services)
         {
             // services
             services.AddScoped<SystemAccountOtherServices>();
             services.AddScoped<SystemAccountLoginServices>();
             services.AddScoped<SystemAccountSearchServices>();
-            
+
             // controller
             services.AddScoped<SystemAccountController>();
+        }
+
+        private static void SystemAccountConcreteDependencies(IServiceCollection services)
+        {
+            // other
+            services.AddScoped<SystemAccountCreate>();
+            services.AddScoped<SystemAccountDelete>();
+            services.AddScoped<SystemAccountEmail>();
+            // login
+            services.AddScoped<SystemAccountCheckAccount>();
+            services.AddScoped<SystemAccountCompareVerification>();
+            services.AddScoped<SystemAccountVerification>();
+            services.AddScoped<SystemAccountVerificationDelete>();
+            // search
+            services.AddScoped<SystemAccountSearchAll>();
+            services.AddScoped<SystemAccountSearchByEmail>();
+            services.AddScoped<SystemAccountSearchById>();
         }
         
         private static void ItemController(IServiceCollection services)
@@ -217,14 +181,40 @@ namespace CarlosYulo
             services.AddScoped<ItemController>();
         }
 
+        private static void ItemConcreteDependencies(IServiceCollection services)
+        {
+            // create
+            services.AddScoped<ItemCreate>();
+            // search
+            services.AddScoped<ItemSearchAll>();
+            services.AddScoped<ItemSearchByCategory>();
+            services.AddScoped<ItemSearchById>();
+            // update
+            services.AddScoped<ItemBuy>();
+            services.AddScoped<ItemRestockQuantity>();
+            services.AddScoped<ItemUpdateDetails>();
+        }
+        
         private static void RevenueController(IServiceCollection services)
         {
             services.AddScoped<RevenueSaleServices>();
             services.AddScoped<RevenueLiabilityServices>();
-            
+
             // controller
             services.AddScoped<RevenueController>();
         }
 
+        public static void RevenueConcreteDependencies(IServiceCollection services)
+        {
+            // sale
+            services.AddScoped<RevenueGenerateFinalReport>();
+            services.AddScoped<RevenueGeneratePartialReport>();
+            services.AddScoped<RevenueGenerateItemSaleReport>();
+            services.AddScoped<RevenueGenerateMembershipSalesReport>();
+            // liability
+            services.AddScoped<LiabilityTotalMonth>();
+            services.AddScoped<LiabilityEmployeeSalary>();
+            services.AddScoped<LiabilityItemRestock>();
+        }
     }
 }

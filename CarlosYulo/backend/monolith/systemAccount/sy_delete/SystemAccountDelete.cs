@@ -6,12 +6,10 @@ namespace CarlosYulo.backend.monolith.employee;
 
 public class SystemAccountDelete : IDelete<SystemAccount>
 {
-    private DatabaseConnector dbConnector;
     private DatabaseConnection dbConnection;
 
-    public SystemAccountDelete(DatabaseConnector dbConnector, DatabaseConnection dbConnection)
+    public SystemAccountDelete( DatabaseConnection dbConnection)
     {
-        this.dbConnector = dbConnector;
         this.dbConnection = dbConnection;
     }
 
