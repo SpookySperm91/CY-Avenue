@@ -28,6 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="backend\monolith\a_service\" />
       <Folder Include="backend\monolith\session\ss_delete\" />
       <Folder Include="backend\monolith\session\ss_search\" />
       <Folder Include="backend\monolith\session\ss_update\" />
