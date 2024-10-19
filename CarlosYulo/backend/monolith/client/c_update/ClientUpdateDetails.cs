@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 
 namespace CarlosYulo.backend.monolith;
 
-public class ClientUpdateDetails : IUpdateDetails<bool, Client>
+public class ClientUpdateDetails 
 {
     private DatabaseConnection dbConnection;
 

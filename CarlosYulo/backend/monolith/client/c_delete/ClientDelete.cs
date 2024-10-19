@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 
 namespace CarlosYulo.backend.monolith.delete;
 
-public class ClientDelete : IDeleteByEntity<Client>, IDeleteById
+public class ClientDelete 
 {
     private DatabaseConnection dbConnection;
 

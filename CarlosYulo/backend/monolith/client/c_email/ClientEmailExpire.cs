@@ -2,7 +2,7 @@
 
 namespace CarlosYulo.backend.monolith;
 
-public class ClientEmailExpire : EmailSendBase, IClientEmail
+public class ClientEmailExpire : EmailSendBase
 {
     private string membershipType;
     private string expiryDate;

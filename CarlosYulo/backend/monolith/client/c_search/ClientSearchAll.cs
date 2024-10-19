@@ -5,7 +5,7 @@ using MySql.Data.MySqlClient;
 
 namespace CarlosYulo.backend.monolith;
 
-public class ClientSearchAll : ISearchAll<Client, string?>
+public class ClientSearchAll 
 {
     private readonly DatabaseConnection dbConnection;
     private readonly ImageViewer imageViewer;

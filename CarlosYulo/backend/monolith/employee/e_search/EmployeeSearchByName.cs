@@ -5,7 +5,7 @@ using MySql.Data.MySqlClient;
 
 namespace CarlosYulo.backend.monolith.employee.search;
 
-public class EmployeeSearchByName: ISearchByFullName<Employee, int?>
+public class EmployeeSearchByName
 {
     private readonly DatabaseConnection dbConnection;
     private readonly ImageViewer imageViewer;

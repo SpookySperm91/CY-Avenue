@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 
 namespace CarlosYulo.backend.monolith.employee;
 
-public class SystemAccountDelete : IDelete<SystemAccount>
+public class SystemAccountDelete
 {
     private DatabaseConnection dbConnection;
 

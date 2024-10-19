@@ -5,7 +5,7 @@ using MySql.Data.MySqlClient;
 
 namespace CarlosYulo.backend.monolith.employee.create;
 
-public class EmployeeCreateNew : ICreate<Employee>
+public class EmployeeCreateNew
 {
     private DatabaseConnection dbConnection;
     private ImageViewer imageViewer;

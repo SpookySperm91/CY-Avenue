@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 
 namespace CarlosYulo.backend.monolith;
 
-public class ClientUpdateProfilePicture : IUpdateProfilePicture<bool, Client>
+public class ClientUpdateProfilePicture 
 {
     private DatabaseConnection dbConnection;
 

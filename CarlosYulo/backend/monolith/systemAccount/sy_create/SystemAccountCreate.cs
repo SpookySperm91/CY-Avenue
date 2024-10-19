@@ -5,7 +5,7 @@ using MySql.Data.MySqlClient;
 
 namespace CarlosYulo.backend.monolith.employee;
 
-public class SystemAccountCreate : ICreate<SystemAccount>
+public class SystemAccountCreate 
 {
     private DatabaseConnection dbConnection;
     private PasswordHashing passwordHashing;

@@ -5,7 +5,7 @@ using MySql.Data.MySqlClient;
 
 namespace CarlosYulo.backend.monolith.employee.search;
 
-public class EmployeeSearchAll : ISearchAll<Employee, EmployeTypeEnum?>
+public class EmployeeSearchAll 
 {
     private readonly DatabaseConnection dbConnection;
     private readonly ImageViewer imageViewer;

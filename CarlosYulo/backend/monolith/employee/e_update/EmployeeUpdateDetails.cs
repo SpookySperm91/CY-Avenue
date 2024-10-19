@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 
 namespace CarlosYulo.backend.monolith.employee.update;
 
-public class EmployeeUpdateDetails : IUpdateDetails<bool, Employee>
+public class EmployeeUpdateDetails 
 {
     private DatabaseConnection dbConnection;
 

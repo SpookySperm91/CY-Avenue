@@ -15,6 +15,10 @@ using CarlosYulo.backend.monolith.employee.update;
 using CarlosYulo.backend.monolith.item;
 using CarlosYulo.backend.monolith.revenue;
 using CarlosYulo.backend.monolith.revenue.i_liability;
+using CarlosYulo.backend.monolith.schedule;
+using CarlosYulo.backend.monolith.schedule.ss_delete;
+using CarlosYulo.backend.monolith.schedule.ss_search;
+using CarlosYulo.backend.monolith.session.ss_create;
 using CarlosYulo.backend.monolith.shop;
 using CarlosYulo.backend.monolith.shop.i_revenue;
 using CarlosYulo.backend.monolith.systemAccount;
@@ -38,10 +42,10 @@ namespace CarlosYulo
             // Database
             services.AddScoped<DatabaseConnection>(provider =>
                 new DatabaseConnection("localhost", "cy", "root", "123456", "3306"));
-            
+
             // Common
             CommonClassDependencies(services);
-            
+
             // Controller / Services
             ClientController(services);
             ClientConcreteDependencies(services);
@@ -58,17 +62,19 @@ namespace CarlosYulo
             RevenueController(services);
             RevenueConcreteDependencies(services);
 
+            ScheduleController(services);
+            ScheduleConcreteDependencies(services);
+            
             // Form 1
             services.AddScoped<Form1>();
         }
 
 
-        
         // // // // // // // // // //
         private static void CommonClassDependencies(IServiceCollection services)
         {
             // common
-            services.AddScoped<EmailSendBase>();
+            // services.AddScoped<EmailSendBase>();
             services.AddScoped<ErrorMessageBox>();
             services.AddScoped<ImageViewer>();
             services.AddScoped<PasswordHashing>();
@@ -169,7 +175,7 @@ namespace CarlosYulo
             services.AddScoped<SystemAccountSearchByEmail>();
             services.AddScoped<SystemAccountSearchById>();
         }
-        
+
         private static void ItemController(IServiceCollection services)
         {
             // services
@@ -194,7 +200,7 @@ namespace CarlosYulo
             services.AddScoped<ItemRestockQuantity>();
             services.AddScoped<ItemUpdateDetails>();
         }
-        
+
         private static void RevenueController(IServiceCollection services)
         {
             services.AddScoped<RevenueSaleServices>();
@@ -215,6 +221,30 @@ namespace CarlosYulo
             services.AddScoped<LiabilityTotalMonth>();
             services.AddScoped<LiabilityEmployeeSalary>();
             services.AddScoped<LiabilityItemRestock>();
+        }
+
+        private static void ScheduleController(IServiceCollection services)
+        {
+            services.AddScoped<ScheduleCreateServices>();
+            services.AddScoped<ScheduleDeleteServices>();
+            services.AddScoped<ScheduleSearchServices>();
+            
+            // controller
+            services.AddScoped<ScheduleController>();
+        }
+
+        
+        public static void ScheduleConcreteDependencies(IServiceCollection services)
+        {
+            // delete
+            services.AddScoped<ScheduleDeleteAllPrevious>(); 
+            services.AddScoped<ScheduleDeleteAllByDay>(); 
+            // create
+            services.AddScoped<ScheduleCreateFixed>(); 
+            services.AddScoped<ScheduleCreatePersonal>(); 
+            services.AddScoped<ScheduleCreatePersonalClassMembers>(); 
+            // search
+            services.AddScoped<ScheduleSearchAll>();
         }
     }
 }
