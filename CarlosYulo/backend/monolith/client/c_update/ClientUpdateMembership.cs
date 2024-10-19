@@ -27,7 +27,7 @@ public class ClientUpdateMembership : IClientUpdate
             return false;
         }
 
-        if (membershipType == MembershipType.WALK_IN || membershipType == MembershipType.WALK_IN_TREADMILL)
+        if (membershipType == MembershipType.WALK_IN)
         {
             message = "Non members cannot update their membership type";
             return false;

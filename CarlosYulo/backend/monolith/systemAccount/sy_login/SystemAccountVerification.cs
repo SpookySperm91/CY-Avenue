@@ -86,9 +86,8 @@ public class SystemAccountVerification
                 if (row > 0)
                 {
                     // Send verification code email
-                    if (!systemAccountEmail.SendVerificationCodeEmail(verification, email))
+                    if (!systemAccountEmail.SendVerificationCodeEmail(verification, email, out message))
                     {
-                        message = "Verification code email verification failed";
                         systemVerification = null;
                         return false;
                     }

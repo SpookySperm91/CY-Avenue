@@ -25,7 +25,7 @@ public class EmployeeAttendanceSearchAll
     }
 
 
-    public List<EmployeeAttendance> SearchAll(DateTime checkDate, AttendanceType? procedure)
+    public List<EmployeeAttendance>? SearchAll(DateTime checkDate, AttendanceType? procedure, out string message)
     {
         var employee = new List<EmployeeAttendance>();
         string prc = procedureType(procedure);
@@ -49,13 +49,16 @@ public class EmployeeAttendanceSearchAll
                     Console.WriteLine("Retrieving and add multiple rows in list successfully");
                 }
             }
+
+            message = "";
+            return employee;
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
+            message = ex.Message;
+            return null;
         }
-
-        return employee;
     }
 
     private EmployeeAttendance MapAttendance(MySqlDataReader reader)

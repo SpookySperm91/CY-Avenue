@@ -5,11 +5,11 @@ using MySql.Data.MySqlClient;
 
 namespace CarlosYulo.backend.monolith.shop.i_revenue;
 
-public class MembershipRevenueGenerate
+public class RevenueGenerateMembershipSalesReport
 {
     private DatabaseConnection dbConnection;
 
-    public MembershipRevenueGenerate(DatabaseConnection dbConnection)
+    public RevenueGenerateMembershipSalesReport(DatabaseConnection dbConnection)
     {
         this.dbConnection = dbConnection;
     }

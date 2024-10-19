@@ -5,34 +5,31 @@ using MySql.Data.MySqlClient;
 
 namespace CarlosYulo.backend.monolith.shop.i_revenue;
 
-public class RevenueGenerateMonthlyReport
+public class RevenueGenerateFinalReport
 {
     private DatabaseConnection dbConnection;
 
-    public RevenueGenerateMonthlyReport(DatabaseConnection dbConnection)
+    public RevenueGenerateFinalReport(DatabaseConnection dbConnection)
     {
         this.dbConnection = dbConnection;
     }
 
-    public GeneralRevenueReport? CreateGeneralRevenueReport(DateTime date, out string message)
+    public FinalRevenueReport? GenerateFinalRevenueReport(DateTime month, out string message)
     {
-        GeneralRevenueReport revenueReport = null;
-        message = string.Empty; // Initialize message
-
+        FinalRevenueReport revenueReport = null;
         try
         {
-            // Begin transaction only if no existing transaction 
             if (dbConnection.transaction is null)
             {
                 dbConnection.transaction = dbConnection.mysqlConnection.BeginTransaction();
             }
 
-            using (MySqlCommand command = new MySqlCommand("prcRevenuePartialReportCreate",
+            using (MySqlCommand command = new MySqlCommand("prcFinalRevenueMonthlyReport",
                        dbConnection.mysqlConnection,
                        dbConnection.transaction))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("p_date", date);
+                command.Parameters.AddWithValue("p_date", month);
 
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
@@ -46,19 +43,19 @@ public class RevenueGenerateMonthlyReport
 
                     if (reader.Read())
                     {
-                        revenueReport = new GeneralRevenueReport
+                        revenueReport = new FinalRevenueReport
                         {
                             RevenueDate = reader.GetDateTime("revenue_date"),
-                            ItemSales = reader.GetDouble("item_sales"),
-                            MembershipSales = reader.GetDouble("membership_sales"),
-                            TotalRevenue = reader.GetDouble("total_revenue")
+                            OriginalRevenue = reader.GetDouble("original_revenue"),
+                            TotalLiability = reader.GetDouble("liabilities"),
+                            FinalRevenue = reader.GetDouble("final_revenue")
                         };
                     }
                 }
-                
+
                 dbConnection.transaction.Commit();
                 dbConnection.transaction = null;
-                message = "Success. General Revenue Report for" + date.ToString("MM/yyyy");
+                message = "Success. General Revenue Report for" + month.ToString("MM/yyyy");
                 return revenueReport;
             }
         }

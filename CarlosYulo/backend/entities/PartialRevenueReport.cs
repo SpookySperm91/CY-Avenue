@@ -1,6 +1,6 @@
 ﻿namespace CarlosYulo.backend.entities;
 
-public class GeneralRevenueReport
+public class PartialRevenueReport
 {
     public DateTime RevenueDate { get; set; }
     public double ItemSales { get; set; }

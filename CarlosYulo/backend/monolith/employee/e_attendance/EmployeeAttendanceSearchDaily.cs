@@ -70,7 +70,7 @@ public class EmployeeAttendanceSearchDaily
                     }
 
                     message = "Error shit";
-                    return employee;
+                    return null;
                 }
             }
         }
@@ -78,7 +78,7 @@ public class EmployeeAttendanceSearchDaily
         {
             message = "An error occurred: " + e.Message;
             Console.WriteLine(message);
-            return employee;
+            return null;
         }
     }
 

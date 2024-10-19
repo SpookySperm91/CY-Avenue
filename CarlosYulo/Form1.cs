@@ -29,22 +29,25 @@ public partial class Form1 : Form
     private ClientSearchById clientSearchById;
     private ItemSearchByCategory itemSearchByCategory;
     private ItemBuy itemBuy;
-    private ItemRevenueGenerate itemRevenueGenerate;
-    private MembershipRevenueGenerate membershipRevenueGenerate;
-    private RevenueGenerateMonthlyReport revenueGenerateMonthlyReport;
+    private RevenueGenerateItemSaleReport _revenueGenerateItemSaleReport;
+    private RevenueGenerateMembershipSalesReport _revenueGenerateMembershipSalesReport;
+    private RevenueGeneratePartialReport _revenueGeneratePartialReport;
     private LiabilityEmployeeSalary liabilityEmployeeSalary;
     private LiabilityItemRestock liabilityItemRestock;
     private ItemRestockQuantity itemRestockQuantity;
     private ItemSearchById itemSearchById;
-
+    private LiabilityTotalMonth liabilityTotalMonth;
+    private RevenueGenerateFinalReport _revenueGenerateFinalReport;
 
     public Form1(ClientSearchById clientSearchById, ItemBuy itemBuy, ItemSearchByCategory itemSearchByCategory,
-        ItemRevenueGenerate itemRevenueGenerate,
-        MembershipRevenueGenerate membershipRevenueGenerate, RevenueGenerateMonthlyReport revenueGenerateMonthlyReport,
+        RevenueGenerateItemSaleReport revenueGenerateItemSaleReport,
+        RevenueGenerateMembershipSalesReport revenueGenerateMembershipSalesReport, RevenueGeneratePartialReport revenueGeneratePartialReport,
         LiabilityEmployeeSalary liabilityEmployeeSalary,
         LiabilityItemRestock liabilityItemRestock,
         ItemRestockQuantity itemRestockQuantity,
-        ItemSearchById itemSearchById)
+        ItemSearchById itemSearchById,
+        LiabilityTotalMonth liabilityTotalMonth,
+        RevenueGenerateFinalReport revenueGenerateFinalReport)
     {
         InitializeComponent();
 
@@ -53,14 +56,17 @@ public partial class Form1 : Form
         this.itemBuy = itemBuy;
         this.itemSearchByCategory = itemSearchByCategory;
 
-        this.itemRevenueGenerate = itemRevenueGenerate;
-        this.membershipRevenueGenerate = membershipRevenueGenerate;
-        this.revenueGenerateMonthlyReport = revenueGenerateMonthlyReport;
+        this._revenueGenerateItemSaleReport = revenueGenerateItemSaleReport;
+        this._revenueGenerateMembershipSalesReport = revenueGenerateMembershipSalesReport;
+        this._revenueGeneratePartialReport = revenueGeneratePartialReport;
         this.liabilityEmployeeSalary = liabilityEmployeeSalary;
         this.liabilityItemRestock = liabilityItemRestock;
         this.itemRestockQuantity = itemRestockQuantity;
 
         this.itemSearchById = itemSearchById;
+        this.liabilityTotalMonth = liabilityTotalMonth;
+        
+        this._revenueGenerateFinalReport = revenueGenerateFinalReport;
     }
 
 
@@ -88,7 +94,7 @@ public partial class Form1 : Form
         }
 
         // Generate item sales after the items are successfully bought
-        List<ItemSales> salesList = itemRevenueGenerate.GenerateItemSales(itemsToBuy, out message);
+        List<ItemSales> salesList = _revenueGenerateItemSaleReport.GenerateItemSales(itemsToBuy, out message);
         if (salesList == null)
         {
             MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -109,7 +115,6 @@ public partial class Form1 : Form
     {
         string message;
 
-
         Item item = itemSearchById.SearchItemById(534871, out message);
         if (item == null)
         {
@@ -117,11 +122,14 @@ public partial class Form1 : Form
             return;
         }
 
-        item.QuantityToBuy = 5;
+        liabilityEmployeeSalary.GenerateEmployeeSalary(new DateTime(2024, 10, 1), out message);
+
+        item.QuantityToBuy = 10;
 
         if (!itemRestockQuantity.AddQuantity(item, item.QuantityToBuy, out message))
         {
             MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
         }
 
         ItemRestock restockReport = liabilityItemRestock.GenerateItemRestock(item, item.QuantityToBuy, out message);
@@ -130,9 +138,26 @@ public partial class Form1 : Form
             MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
+
         MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         Console.WriteLine(restockReport.ToString());
         
+        GeneralLiabilityReport report = liabilityTotalMonth.GenerateLiabilityReport(new DateTime(2024, 10, 1), out message);
+        if (report is null)
+        {
+            MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+        MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        Console.WriteLine(report.ToString());
+        
+        FinalRevenueReport finalReport = _revenueGenerateFinalReport.GenerateFinalRevenueReport(new DateTime(2024, 10, 1), out message);
+        if (finalReport is null)
+        {
+            MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+        Console.WriteLine(finalReport.ToString());
     }
 
 

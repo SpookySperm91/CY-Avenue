@@ -8,13 +8,14 @@ public class SystemAccountEmail : EmailSendBase
     private string expirationTime;
 
     // Method to send the verification code email
-    public bool SendVerificationCodeEmail(SystemVerification verification, string accountEmail)
+    public bool SendVerificationCodeEmail(SystemVerification verification, string accountEmail, out string message)
     {
         try
         {
             // Validate input
             if (string.IsNullOrWhiteSpace(accountEmail) || string.IsNullOrWhiteSpace(verification.UserName))
             {
+                message = "Please provide an email address and username";
                 return false;
             }
 
@@ -23,11 +24,13 @@ public class SystemAccountEmail : EmailSendBase
             Subject = "System Account Verification";
 
             SendEmail(verification.UserName, accountEmail, verificationCode);
+            message = "";
             return true;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Failed to send email: {ex.Message}");
+            message = ex.Message;
             return false;
         }
     }

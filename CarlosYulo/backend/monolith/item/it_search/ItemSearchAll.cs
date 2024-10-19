@@ -17,7 +17,7 @@ public class ItemSearchAll
     }
 
 
-    public List<Item> SearchAll(out string message)
+    public List<Item>? SearchAll(out string message)
     {
         if (dbConnection.transaction == null)
         {

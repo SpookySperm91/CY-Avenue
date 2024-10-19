@@ -16,17 +16,17 @@ public class EmployeeCreateNew : ICreate<Employee>
         imageViewer = new ImageViewer();
     }
 
-    public bool Create(Employee systemAccount, out string message)
+    public bool Create(Employee employee, out string message)
     {
         // if employee is null
-        if (systemAccount is null)
+        if (employee is null)
         {
             message = "Client object is null";
             return false;
         }
 
         List<string> missingFields = new List<string>();
-        ValidateFields(systemAccount, missingFields);
+        ValidateFields(employee, missingFields);
 
         // Create error message
         if (missingFields.Count > 0)
@@ -34,7 +34,7 @@ public class EmployeeCreateNew : ICreate<Employee>
             message = "Please fill out the following missing fields: " + string.Join(", ", missingFields);
             return false;
         }
-        string employeeType = systemAccount.EmployeeTypeId switch
+        string employeeType = employee.EmployeeTypeId switch
         {
             1 => "Manager",
             2 => "Staff",
@@ -68,17 +68,17 @@ public class EmployeeCreateNew : ICreate<Employee>
                 command.Parameters.Add(outputEmployeeType);
 
                 // instantiate values to prc parameter
-                NewEmployeeDataMap(command, systemAccount);
+                NewEmployeeDataMap(command, employee);
 
                 int rowsAffected = command.ExecuteNonQuery();
                 if (rowsAffected > 0)
                 {
-                    systemAccount.EmployeeId = Convert.ToInt32(outputEmployeeId.Value);
-                    systemAccount.SetEmployeeType(outputEmployeeType.Value?.ToString());
+                    employee.EmployeeId = Convert.ToInt32(outputEmployeeId.Value);
+                    employee.SetEmployeeType(outputEmployeeType.Value?.ToString());
 
                     dbConnection.transaction.Commit();
                     dbConnection.transaction = null;
-                    message = $"New {employeeType}: {systemAccount.FullName} created successfully";
+                    message = $"New {employeeType}: {employee.FullName} created successfully";
                     return true;
                 }
 

@@ -135,7 +135,6 @@ public enum MembershipType
     [Description("Basic")] BASIC,
     [Description("VIP")] VIP,
     [Description("Walk-in")] WALK_IN,
-    [Description("Walk-in(Treadmill)")] WALK_IN_TREADMILL
 }
 
 public enum MembershipStatus

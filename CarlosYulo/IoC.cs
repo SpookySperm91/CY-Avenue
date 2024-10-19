@@ -1,5 +1,7 @@
 ﻿using CarlosYulo.backend;
 using CarlosYulo.backend.monolith;
+using CarlosYulo.backend.monolith.client;
+using CarlosYulo.backend.monolith.client.c_create;
 using CarlosYulo.backend.monolith.common;
 using CarlosYulo.backend.monolith.create;
 using CarlosYulo.backend.monolith.delete;
@@ -10,9 +12,12 @@ using CarlosYulo.backend.monolith.employee.delete;
 using CarlosYulo.backend.monolith.employee.salary;
 using CarlosYulo.backend.monolith.employee.search;
 using CarlosYulo.backend.monolith.employee.update;
+using CarlosYulo.backend.monolith.item;
+using CarlosYulo.backend.monolith.revenue;
 using CarlosYulo.backend.monolith.revenue.i_liability;
 using CarlosYulo.backend.monolith.shop;
 using CarlosYulo.backend.monolith.shop.i_revenue;
+using CarlosYulo.backend.monolith.systemAccount;
 using CarlosYulo.backend.monolith.systemAccount.sy_login;
 using CarlosYulo.database;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +47,13 @@ namespace CarlosYulo
             SystemAccountServiceDependancies(services);
             CommonClassDependancies(services);
 
+            // Controller
+            ClientController(services);
+            EmployeeController(services);
+            SystemAccountController(services);
+            ItemController(services);
+            RevenueController(services);
+            
             // Form 1
             services.AddScoped<Form1>();
         }
@@ -94,8 +106,6 @@ namespace CarlosYulo
 
         private static void EmployeeServiceDependancies(IServiceCollection services)
         {
-            // Employee Concrete Classes
-            services.AddScoped<ISearch<Employee, int?>, EmployeeSearch>();
 
             // service class
             services.AddScoped<EmployeeCreateNew>();
@@ -150,11 +160,71 @@ namespace CarlosYulo
             services.AddScoped<ItemBuy>();
             
             // REVENUE
-            services.AddScoped<ItemRevenueGenerate>();
-            services.AddScoped<MembershipRevenueGenerate>();
-            services.AddScoped<RevenueGenerateMonthlyReport>();
+            services.AddScoped<RevenueGenerateItemSaleReport>();
+            services.AddScoped<RevenueGenerateMembershipSalesReport>();
+            services.AddScoped<RevenueGeneratePartialReport>();
             services.AddScoped<LiabilityEmployeeSalary>();
             services.AddScoped<LiabilityItemRestock>();
+            services.AddScoped<LiabilityTotalMonth>();
+            services.AddScoped<RevenueGenerateFinalReport>();
         }
+
+        private static void ClientController(IServiceCollection services)
+        {
+            // services
+            services.AddScoped<ClientCreateServices>();
+            services.AddScoped<ClientUpdateServices>();
+            services.AddScoped<ClientSearchServices>();
+            services.AddScoped<ClientDeleteServices>();
+            services.AddScoped<ClientEmailService>();
+            
+            // controller
+            services.AddScoped<ClientController>();
+        }
+        
+        private static void EmployeeController(IServiceCollection services)
+        {
+            // services
+            services.AddScoped<EmployeeOtherServices>();
+            services.AddScoped<EmployeeAttendanceServices>();
+            services.AddScoped<EmployeeSearchServices>();
+            services.AddScoped<EmployeeUpdateServices>();
+            
+            // controller
+            services.AddScoped<EmployeeController>();
+        }
+        
+        
+        private static void SystemAccountController(IServiceCollection services)
+        {
+            // services
+            services.AddScoped<SystemAccountOtherServices>();
+            services.AddScoped<SystemAccountLoginServices>();
+            services.AddScoped<SystemAccountSearchServices>();
+            
+            // controller
+            services.AddScoped<SystemAccountController>();
+        }
+        
+        private static void ItemController(IServiceCollection services)
+        {
+            // services
+            services.AddScoped<ItemCreateServices>();
+            services.AddScoped<ItemSearchServices>();
+            services.AddScoped<ItemUpdateServices>();
+
+            // controller
+            services.AddScoped<ItemController>();
+        }
+
+        private static void RevenueController(IServiceCollection services)
+        {
+            services.AddScoped<RevenueSaleServices>();
+            services.AddScoped<RevenueLiabilityServices>();
+            
+            // controller
+            services.AddScoped<RevenueController>();
+        }
+
     }
 }

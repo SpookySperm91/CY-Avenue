@@ -3,22 +3,21 @@ using CarlosYulo.backend.entities;
 using CarlosYulo.database;
 using MySql.Data.MySqlClient;
 
-namespace CarlosYulo.backend.monolith.revenue.i_liability;
+namespace CarlosYulo.backend.monolith.shop.i_revenue;
 
-public class LiabilityTotalMonth
+public class RevenueGeneratePartialReport
 {
     private DatabaseConnection dbConnection;
 
-    public LiabilityTotalMonth(DatabaseConnection dbConnection)
+    public RevenueGeneratePartialReport(DatabaseConnection dbConnection)
     {
         this.dbConnection = dbConnection;
     }
 
-
-    public GeneralLiabilityReport? GenerateLiabilityReport(DateTime date, out string message)
+    public PartialRevenueReport? CreatePartialRevenueReport(DateTime date, out string message)
     {
-        GeneralLiabilityReport report = null;
-        message = string.Empty; 
+        PartialRevenueReport revenueReport = null;
+        message = string.Empty; // Initialize message
 
         try
         {
@@ -28,7 +27,7 @@ public class LiabilityTotalMonth
                 dbConnection.transaction = dbConnection.mysqlConnection.BeginTransaction();
             }
 
-            using (MySqlCommand command = new MySqlCommand("prcLiabilityMonthlyReport",
+            using (MySqlCommand command = new MySqlCommand("prcRevenuePartialReportCreate",
                        dbConnection.mysqlConnection,
                        dbConnection.transaction))
             {
@@ -47,23 +46,24 @@ public class LiabilityTotalMonth
 
                     if (reader.Read())
                     {
-                        report = new GeneralLiabilityReport
+                        revenueReport = new PartialRevenueReport
                         {
-                            IncurredAt = reader.GetDateTime("incurred_at"),
-                            TotalSalaryCost = reader.GetDouble("salary_cost"),
-                            TotalItemRestockCost = reader.GetDouble("item_restock_cost"),
-                            TotalCost = reader.GetDouble("total_liability")
+                            RevenueDate = reader.GetDateTime("revenue_date"),
+                            ItemSales = reader.GetDouble("item_sales"),
+                            MembershipSales = reader.GetDouble("membership_sales"),
+                            TotalRevenue = reader.GetDouble("total_revenue")
                         };
                     }
                 }
-
+                
                 dbConnection.transaction.Commit();
                 dbConnection.transaction = null;
+                message = "Success. General Revenue Report for" + date.ToString("MM/yyyy");
+                return revenueReport;
             }
         }
         catch (Exception e)
         {
-            // Rollback transaction on error
             if (dbConnection.transaction != null)
             {
                 dbConnection.transaction.Rollback();
@@ -71,11 +71,8 @@ public class LiabilityTotalMonth
             }
 
             Console.WriteLine(e);
-            message = e.Message; // Assign the error message
-            return null; // Return null in case of an error
+            message = e.Message; // Capture the exception message for output
+            return null;
         }
-
-        return report; // Return the populated report
-
     }
 }
